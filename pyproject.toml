@@ -1,0 +1,328 @@
+# ---------------------------------------------------------------------------
+# policy-guarded-ops-agent — pyproject.toml
+#
+# Toolchain: Python 3.12 + uv. Never invoke `python`/`pip` directly — use `uv run`.
+# ---------------------------------------------------------------------------
+
+[project]
+name = "policy-guarded-ops-agent"
+version = "0.1.0"
+description = "An agent that runs real customer-ops workflows and provably obeys your business rules"
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+license = { text = "MIT" }
+authors = [{ name = "tmaslam", email = "tmaslam@gmail.com" }]
+keywords = ["llm", "agent", "langgraph", "policy", "guardrails", "hitl", "evals"]
+classifiers = [
+  "Private :: Do Not Upload",
+  "Programming Language :: Python :: 3.12",
+  "Typing :: Typed",
+]
+
+# Core runtime deps. Everything here is imported on the default code path.
+#
+# Why FastAPI/uvicorn/langgraph/sqlalchemy are CORE and not extras: CI syncs with
+# `uv sync --locked --dev` (no extras) and the Docker runtime syncs `--no-dev`
+# (no extras) before running `uvicorn policy_guarded_ops_agent.main:app`. An
+# extra the service cannot boot without is not optional — it is a lie in the
+# manifest. The genuinely optional paths (Postgres, Langfuse) are extras below.
+dependencies = [
+  # UPPER BOUND IS LOAD-BEARING — do not widen to <2.0.0 without re-testing.
+  # litellm 1.92.0 dropped the `py3-none-any` wheel and began shipping compiled
+  # wheels built around a Rust extension (`litellm-rust`). Verified against the
+  # PyPI file list for 1.92.0: the ONLY wheels are
+  # cp310..cp313-manylinux_2_28_{x86_64,aarch64} — there is no Windows wheel and
+  # no pure-Python fallback. On this Windows dev box uv therefore falls back to
+  # the sdist and tries to `cargo rustc` a maturin build, which fails outright
+  # (no Rust toolchain). 1.91.3 is the last release shipping
+  # `litellm-1.91.3-py3-none-any.whl`, which installs on Windows, on the Linux CI
+  # runner, and in the slim Docker image alike.
+  "litellm>=1.55.0,<1.92.0",
+  "pydantic>=2.9.0,<3.0.0",
+  "pydantic-settings>=2.6.0,<3.0.0",
+  "httpx>=0.27.0,<1.0.0",
+  "python-dotenv>=1.0.1,<2.0.0",
+  "structlog>=24.4.0,<26.0.0",
+  "opentelemetry-api>=1.29.0,<2.0.0",
+  "opentelemetry-sdk>=1.29.0,<2.0.0",
+  # The agent graph itself.
+  "langgraph>=0.2.60,<1.0.0",
+  "langgraph-checkpoint>=2.0.0,<3.0.0",
+  # Offline/default HITL durability. The Postgres equivalent is in the `db` extra.
+  "langgraph-checkpoint-sqlite>=2.0.0,<3.0.0",
+  # Audit trail + approval queue. The `asyncio` extra pulls greenlet, which
+  # SQLAlchemy's async engine needs — without it the async path fails at runtime.
+  "sqlalchemy[asyncio]>=2.0.36,<3.0.0",
+  "aiosqlite>=0.20.0,<1.0.0",
+  # The service surface.
+  "fastapi>=0.115.0,<1.0.0",
+  "uvicorn[standard]>=0.32.0,<1.0.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/tmaslam/policy-guarded-ops-agent"
+Source = "https://github.com/tmaslam/policy-guarded-ops-agent"
+
+# ---------------------------------------------------------------------------
+# Optional extras — install with `uv sync --extra <name>`.
+# ---------------------------------------------------------------------------
+[project.optional-dependencies]
+
+# Postgres (Neon free tier) for the live path: audit trail + LangGraph
+# checkpointer. NEVER required — with no DATABASE_URL, or a `sqlite://` one, the
+# service runs entirely on the SQLite fallback and every test still passes.
+# Drivers are imported lazily (storage/db.py, storage/checkpointer.py) so this
+# extra being absent degrades to a clear, actionable error, never an ImportError
+# at boot.
+db = [
+  "psycopg[binary,pool]>=3.2.3,<4.0.0",
+  "langgraph-checkpoint-postgres>=2.0.0,<3.0.0",
+]
+
+# Langfuse Cloud free tier (50k observations/mo) or self-hosted.
+# NEVER required to run — obs/tracing.py no-ops when LANGFUSE_* is unset.
+obs = [
+  "langfuse>=2.53.0,<4.0.0",
+  "opentelemetry-exporter-otlp-proto-http>=1.29.0,<2.0.0",
+]
+
+[dependency-groups]
+dev = [
+  "ruff>=0.8.0,<1.0.0",
+  "mypy>=1.13.0,<2.0.0",
+  "pytest>=8.3.0,<9.0.0",
+  "pytest-asyncio>=0.24.0,<2.0.0",
+  "pytest-cov>=6.0.0,<8.0.0",
+  "pre-commit>=4.0.0,<5.0.0",
+  "types-pyyaml>=6.0.12",
+  # Drives the FastAPI surface in-process — no live server, no network.
+  "asgi-lifespan>=2.1.0,<3.0.0",
+]
+
+[build-system]
+requires = ["hatchling>=1.25.0"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/policy_guarded_ops_agent"]
+
+[tool.uv]
+# Keep the resolver honest about the Python floor we claim to support.
+required-version = ">=0.5.0"
+
+# ---------------------------------------------------------------------------
+# ruff — strict. Lint + format; replaces black/flake8/isort entirely.
+# ---------------------------------------------------------------------------
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+src = ["src", "tests", "evals"]
+extend-exclude = [".venv", "build", "dist"]
+
+[tool.ruff.lint]
+select = [
+  "A",     # flake8-builtins
+  "ANN",   # flake8-annotations  (typed throughout)
+  "ARG",   # flake8-unused-arguments
+  "ASYNC", # flake8-async
+  "B",     # flake8-bugbear
+  "BLE",   # flake8-blind-except
+  "C4",    # flake8-comprehensions
+  "C90",   # mccabe complexity
+  "DTZ",   # flake8-datetimez     (no naive datetimes)
+  "E",     # pycodestyle errors
+  "EM",    # flake8-errmsg
+  "ERA",   # eradicate            (no commented-out code)
+  "F",     # pyflakes
+  "FBT",   # flake8-boolean-trap
+  "G",     # flake8-logging-format
+  "I",     # isort
+  "ICN",   # flake8-import-conventions
+  "INP",   # flake8-no-pep420
+  "ISC",   # flake8-implicit-str-concat
+  "N",     # pep8-naming
+  "PERF",  # perflint
+  "PGH",   # pygrep-hooks        (no bare `# type: ignore`)
+  "PIE",   # flake8-pie
+  "PL",    # pylint
+  "PT",    # flake8-pytest-style
+  "PTH",   # flake8-use-pathlib
+  "Q",     # flake8-quotes
+  "RET",   # flake8-return
+  "RSE",   # flake8-raise
+  "RUF",   # ruff-specific
+  "S",     # flake8-bandit       (security)
+  "SIM",   # flake8-simplify
+  "SLF",   # flake8-self
+  "T20",   # flake8-print        (use structlog, not print)
+  "TCH",   # flake8-type-checking
+  "TID",   # flake8-tidy-imports
+  "TRY",   # tryceratops
+  "UP",    # pyupgrade
+  "W",     # pycodestyle warnings
+]
+ignore = [
+  "ANN401",  # allow `Any` where a boundary genuinely accepts it (json payloads)
+  "ISC001",  # conflicts with the formatter
+  "TRY003",  # long messages inside raise are fine and more readable
+  "COM812",  # conflicts with the formatter
+]
+
+[tool.ruff.lint.per-file-ignores]
+# Tests may assert, hardcode magic values, and skip annotations on fixtures.
+"tests/**/*.py" = ["S101", "PLR2004", "ANN201", "ANN001", "SLF001", "INP001"]
+# The deterministic fake is allowed a non-crypto hash: it is a stable seed,
+# never a security control.
+"**/fakes/*.py" = ["S324"]
+# FastAPI's dependency-injection idiom is `x: T = Depends(...)` in the signature,
+# which B008 reads as a function call in a default argument. It is the framework's
+# documented API, not the mutable-default bug B008 exists to catch.
+"src/policy_guarded_ops_agent/api/*.py" = ["B008"]
+# CRITICAL — do not remove, and do not "fix" the TC001s in this file.
+#
+# Same hazard as the pydantic one documented under flake8-type-checking below,
+# different library. `StateGraph(AgentState)` calls `get_type_hints()` on the
+# TypedDict at RUNTIME to discover the `Annotated[list[AuditEvent], operator.add]`
+# reducer. Moving those imports into `if TYPE_CHECKING:` — which is exactly what
+# TC001 tells you to do — leaves the names unresolvable and the graph dies at
+# construction with `NameError: name 'AuditEvent' is not defined`.
+#
+# Verified on langgraph 0.6.11: a TypedDict whose annotation is only importable
+# under TYPE_CHECKING raises NameError from StateGraph(); the identical state with
+# a runtime import compiles. `tests/test_graph_topology.py::test_state_annotations_
+# resolve_at_runtime` asserts this stays true.
+"src/policy_guarded_ops_agent/agent/state.py" = ["TC001"]
+
+[tool.ruff.lint.flake8-type-checking]
+# CRITICAL — do not remove. Pydantic resolves field annotations at RUNTIME to
+# build its validators. Without this, TC002/TC003 "helpfully" move imports like
+# `collections.abc.Mapping` into an `if TYPE_CHECKING:` block, and every model
+# using them dies at import with:
+#   PydanticUserError: `M` is not fully defined; you should define `Mapping`,
+#   then call `M.model_rebuild()`
+# This setting tells ruff that annotations on these bases are runtime-evaluated
+# and must stay importable. Verified against pydantic 2.13.
+runtime-evaluated-base-classes = [
+  "pydantic.BaseModel",
+  "pydantic_settings.BaseSettings",
+  # Same hazard, different library: SQLAlchemy resolves `Mapped[...]` annotations
+  # at class-creation time to build the ORM mapping.
+  "sqlalchemy.orm.DeclarativeBase",
+]
+runtime-evaluated-decorators = ["pydantic.validate_call"]
+
+[tool.ruff.lint.pylint]
+# Default is 5. Raised deliberately: the gateway and eval runner are
+# dependency-injected constructors whose arguments are all keyword-only
+# (clock, sleeper, budget, breaker thresholds...). That injectability is what
+# makes them testable with no API key and no sleeping, so it is worth the
+# argument count. This is not a licence for wide positional signatures.
+max-args = 12
+
+[tool.ruff.lint.isort]
+known-first-party = ["policy_guarded_ops_agent", "evals"]
+combine-as-imports = true
+
+[tool.ruff.lint.flake8-tidy-imports]
+# SELF-CONTAINED REPO RULE: this repo must never import from a sibling project
+# or a shared parent. Copy shared code in; do not reference it out.
+ban-relative-imports = "parents"
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.mccabe]
+max-complexity = 10
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "lf"
+docstring-code-format = true
+
+# ---------------------------------------------------------------------------
+# mypy — strict.
+# ---------------------------------------------------------------------------
+[tool.mypy]
+python_version = "3.12"
+files = ["src", "tests", "evals"]
+strict = true
+warn_unreachable = true
+warn_no_return = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+disallow_any_generics = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+no_implicit_reexport = true
+enable_error_code = [
+  "redundant-expr",
+  "possibly-undefined",
+  "truthy-bool",
+  "ignore-without-code",
+  "unused-awaitable",
+]
+plugins = ["pydantic.mypy"]
+
+[[tool.mypy.overrides]]
+# Third-party packages that ship no type information, plus modules that live in
+# OPTIONAL extras and are therefore legitimately absent from a default install
+# (obs/tracing.py imports the OTLP exporter lazily and degrades to a no-op when
+# it is missing; storage/ imports the Postgres driver lazily — mypy must tolerate
+# that, or the zero-account path fails to type-check). Listed explicitly rather
+# than a blanket `ignore_missing_imports = true`, so a genuinely new untyped dep
+# still surfaces.
+module = [
+  "litellm.*",
+  "langfuse.*",
+  "opentelemetry.exporter.*",
+  "langgraph.checkpoint.postgres.*",
+  "psycopg.*",
+  "psycopg_pool.*",
+]
+ignore_missing_imports = true
+
+[tool.pydantic-mypy]
+init_forbid_extra = true
+init_typed = true
+warn_required_dynamic_aliases = true
+
+# ---------------------------------------------------------------------------
+# pytest
+# ---------------------------------------------------------------------------
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths = ["tests"]
+# "src" for the package; "." so `evals.harness` (which stays at the repo root so
+# `python -m evals.harness` keeps working) is importable from tests.
+pythonpath = ["src", "."]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+addopts = [
+  "--strict-markers",
+  "--strict-config",
+  "-ra",
+  "--cov=policy_guarded_ops_agent",
+  "--cov-report=term-missing:skip-covered",
+  "--cov-report=xml",
+]
+markers = [
+  "live: hits a real provider over the network. Deselected by default and never run in CI (`-m 'not live'`).",
+  "slow: takes >1s.",
+  "postgres: needs a live Postgres (Neon/local) and the `db` extra. Deselected by default.",
+]
+filterwarnings = ["error", "ignore::DeprecationWarning:litellm.*"]
+
+[tool.coverage.run]
+branch = true
+source = ["src/policy_guarded_ops_agent"]
+omit = ["*/__main__.py"]
+
+[tool.coverage.report]
+exclude_also = [
+  "if TYPE_CHECKING:",
+  "raise NotImplementedError",
+  "@(abc\\.)?abstractmethod",
+  "\\.\\.\\.",
+]

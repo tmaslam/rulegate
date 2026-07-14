@@ -1,0 +1,92 @@
+
+!**/tiny-fixture-*.bin
+!.env.example
+!.vscode/extensions.json
+#
+# ---------------------------------------------------------------------------
+# Copy to each repo root as `.gitignore`. No placeholders.
+# Editors / OS
+# Environments (uv creates .venv)
+# Golden eval DATASETS are versioned in git (evals/datasets/*.jsonl) — they are
+# Local data & artifacts
+# Never commit models or large corpora (disk is ~30GB).
+# Node / Next.js (UI surfaces deployed to Vercel)
+# Python
+# Secrets — nothing but .env.example is ever committed.
+# Tooling caches
+# Web build output and deps
+# rot into stale numbers that contradict the README. CI regenerates them.
+# the contract. Eval RUN OUTPUTS are not: they are machine-specific and would
+# uv: the lockfile IS committed (reproducible CI). Only its cache is ignored.
+*$py.class
+*.bin
+*.cover
+*.duckdb
+*.duckdb.wal
+*.egg-info/
+*.gguf
+*.key
+*.pem
+*.py[cod]
+*.safetensors
+*.so
+*.sqlite
+*.sqlite3
+*.swo
+*.swp
+*.tsbuildinfo
+.DS_Store
+.Python
+.coverage
+.coverage.*
+.dmypy.json
+.eggs/
+.env
+.env.*
+.eslintcache
+.hypothesis/
+.idea/
+.ipynb_checkpoints/
+.mypy_cache/
+.next/
+.nox/
+.pnpm-store/
+.pytest_cache/
+.ruff_cache/
+.secrets/
+.tox/
+.turbo/
+.uv-cache/
+.venv/
+.vercel/
+.vscode/
+ENV/
+MANIFEST
+Thumbs.db
+__pycache__/
+build/
+coverage.xml
+desktop.ini
+dist/
+dmypy.json
+env/
+evals/out/
+evals/runs/
+htmlcov/
+local.db
+models/
+node_modules/
+nosetests.xml
+npm-debug.log*
+out/
+pnpm-debug.log*
+sdist/
+secrets/
+share/python-wheels/
+venv/
+web/.next/
+web/node_modules/
+web/out/
+wheels/
+yarn-debug.log*
+yarn-error.log*

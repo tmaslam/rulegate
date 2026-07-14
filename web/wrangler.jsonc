@@ -1,0 +1,15 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "policy-guard",
+  "compatibility_date": "2026-07-01",
+
+  // Static-assets-only Worker: no `main` script, so Cloudflare serves `out/`
+  // directly from its edge. The demo runs entirely on fixtures (lib/fixtures.ts),
+  // so there is nothing to execute server-side — no API key, no database, no
+  // origin. This also means it deploys with only `Workers Scripts:Edit`, rather
+  // than the `Cloudflare Pages:Edit` permission a Pages deploy would need.
+  "assets": {
+    "directory": "./out",
+    "not_found_handling": "404-page"
+  }
+}

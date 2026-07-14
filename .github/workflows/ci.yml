@@ -1,0 +1,230 @@
+# Copy to `.github/workflows/ci.yml` and substitute {{PROJECT_NAME}}.
+#
+# The `.tmpl` suffix keeps this inert until copied: GitHub only runs files
+# ending `.yml`/`.yaml` under `.github/workflows/`. Everything below is valid
+# YAML as-is, so you can lint it before renaming.
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# ---------------------------------------------------------------------------
+# ZERO-SECRET GUARANTEE
+#
+# This workflow passes with NO repository secrets configured. No provider key is
+# ever read. The test suite and the eval suite both run against the deterministic
+# fake in `fakes/fake_llm.py`, so CI is free (GitHub Actions is free on public
+# repos), offline, and reproducible.
+#
+# GITHUB_TOKEN is supplied automatically by Actions and is not a secret you set.
+# ---------------------------------------------------------------------------
+permissions:
+  contents: read
+
+concurrency:
+  # A new push to the same PR cancels the in-flight run. Saves runner minutes.
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  UV_VERSION: "0.5.11"
+  PYTHON_VERSION: "3.12"
+  # Absolute drop in eval score that blocks a merge. 0.03 = 3 percentage points.
+  EVAL_MAX_DROP: "0.03"
+
+jobs:
+  # =========================================================================
+  lint:
+    name: ruff + mypy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          version: ${{ env.UV_VERSION }}
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
+
+      - name: Install Python
+        run: uv python install ${{ env.PYTHON_VERSION }}
+
+      - name: Sync dependencies
+        # --locked: fail if uv.lock is stale rather than silently resolving
+        # something different from what was tested locally.
+        run: uv sync --locked --dev
+
+      - name: ruff check
+        run: uv run ruff check --output-format=github .
+
+      - name: ruff format
+        run: uv run ruff format --check --diff .
+
+      - name: mypy (strict)
+        run: uv run mypy
+
+  # =========================================================================
+  test:
+    name: pytest
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          version: ${{ env.UV_VERSION }}
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
+
+      - name: Install Python
+        run: uv python install ${{ env.PYTHON_VERSION }}
+
+      - name: Sync dependencies
+        run: uv sync --locked --dev
+
+      - name: pytest
+        # -m "not live": the `live` marker means "hits a real provider". Those
+        # tests are never run in CI — they would need a key, cost quota, and be
+        # flaky against a rate-limited free tier.
+        run: uv run pytest -m "not live" --cov-report=xml --cov-report=term-missing
+
+      - name: Upload coverage artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: coverage.xml
+          if-no-files-found: warn
+          retention-days: 7
+
+  # =========================================================================
+  evals:
+    name: eval suite + regression gate
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write   # only used to post the comparison comment
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Full history: the base-branch eval needs the base commit present.
+          fetch-depth: 0
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          version: ${{ env.UV_VERSION }}
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
+
+      - name: Install Python
+        run: uv python install ${{ env.PYTHON_VERSION }}
+
+      - name: Sync dependencies
+        run: uv sync --locked --dev
+
+      # --- HEAD ------------------------------------------------------------
+      - name: Run eval suite (head)
+        # Runs against the deterministic fake. No key, no network, no cost.
+        # The report is stamped scaffold_only=true, so its score can never be
+        # mistaken for a model benchmark.
+        run: uv run python -m evals.harness run
+          --dataset evals/datasets/golden.v1.jsonl
+          --out evals/runs/head.json
+
+      # --- BASE ------------------------------------------------------------
+      - name: Run eval suite (base branch)
+        if: github.event_name == 'pull_request'
+        # continue-on-error: a base that predates the harness (or a dataset that
+        # changed shape) must NOT block the PR. A missing base.json makes the
+        # gate abstain and say so — see the `compare` step. Blocking on missing
+        # data teaches people to bypass the gate, which is worse than no gate.
+        continue-on-error: true
+        run: |
+          set -x
+          git worktree add /tmp/base "${{ github.event.pull_request.base.sha }}"
+          cd /tmp/base
+          uv sync --locked --dev
+          uv run python -m evals.harness run \
+            --dataset evals/datasets/golden.v1.jsonl \
+            --out /tmp/base-report.json
+          cp /tmp/base-report.json "${GITHUB_WORKSPACE}/evals/runs/base.json"
+
+      # --- GATE ------------------------------------------------------------
+      - name: Compare and apply regression gate
+        id: compare
+        # Exits non-zero (failing the job, blocking the merge) only when the head
+        # score is MEASURABLY lower than base by more than EVAL_MAX_DROP against
+        # an identical dataset content hash. Missing/incomparable base => warn.
+        run: uv run python -m evals.harness compare
+          --base evals/runs/base.json
+          --head evals/runs/head.json
+          --max-drop ${{ env.EVAL_MAX_DROP }}
+          --markdown evals/runs/comparison.md
+
+      - name: Post comparison table as a PR comment
+        # `always()` so a BLOCKING regression still gets its table posted —
+        # otherwise the gate fails with no explanation of what regressed.
+        # The fork guard is required: GITHUB_TOKEN is read-only on PRs from
+        # forks, so `gh pr comment` would 403 and mask the real result.
+        if: >
+          always() &&
+          github.event_name == 'pull_request' &&
+          github.event.pull_request.head.repo.full_name == github.repository
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [ ! -f evals/runs/comparison.md ]; then
+            echo "no comparison table produced" > evals/runs/comparison.md
+          fi
+          gh pr comment "${{ github.event.pull_request.number }}" \
+            --edit-last --create-if-none \
+            --body-file evals/runs/comparison.md
+
+      - name: Upload eval reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: eval-reports
+          path: evals/runs/
+          if-no-files-found: warn
+          retention-days: 30
+
+  # =========================================================================
+  docker:
+    name: docker build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Build image
+        # Build only — never pushed, so no registry credentials are needed and
+        # the zero-secret guarantee holds. This is the first place the Dockerfile
+        # is actually built (Docker is not installed on the dev machine), so a
+        # mistake surfaces here rather than at deploy time.
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: false
+          load: true
+          tags: {{PROJECT_NAME}}:ci
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Smoke-test the image
+        # Proves the venv, PATH and non-root user are wired correctly — the
+        # errors most likely to survive a green `docker build`.
+        run: |
+          docker run --rm --entrypoint python {{PROJECT_NAME}}:ci -c "import sys; print(sys.version)"
+          echo "non-root check:"
+          test "$(docker run --rm --entrypoint id {{PROJECT_NAME}}:ci -u)" != "0" \
+            && echo "OK: container does not run as root" \
+            || (echo "FAIL: container runs as root" && exit 1)
