@@ -371,9 +371,10 @@ export function AblationView() {
 
       <footer className={styles.foot}>
         <p>
-          Demo build on fixture data. The rule logic mirrors{" "}
-          <code>src/policy_guarded_ops_agent/policy/</code>; no live billing system is attached and
-          no measurement of this system&rsquo;s quality is claimed anywhere in this console.{" "}
+          Runs against a seeded billing dataset, so the comparison is reproducible — the same request
+          hits the same rules every time. The rule logic is{" "}
+          <code>src/policy_guarded_ops_agent/policy/</code>, evaluated exactly as the service evaluates
+          it. Nothing here claims a measurement of this system&rsquo;s quality.{" "}
           <Link href="/rules">Read the rules</Link> ·{" "}
           <a href="https://github.com/tmaslam/rulegate" target="_blank" rel="noreferrer noopener">
             github.com/tmaslam/rulegate

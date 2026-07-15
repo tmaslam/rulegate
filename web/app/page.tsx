@@ -346,12 +346,13 @@ Please follow these rules.
 
       <footer className={s.footer}>
         <p>
-          <strong>RuleGate</strong> — a demo build, not client work. The customers, subscriptions and billing API are
-          invented. The policy engine, audit trail, approval checkpointing and eval harness are real code.
+          <strong>RuleGate</strong> — an open-source policy engine for AI operations agents. Python 3.12, LangGraph,
+          Pydantic, FastAPI. Postgres in production, SQLite offline. MIT licensed.
         </p>
         <p className={s.footNote}>
-          Benchmark figures appear only once a run has actually produced them. Anything unmeasured reads{" "}
-          <code>not yet run</code> rather than a number that merely sounds good.
+          The console runs on a seeded billing dataset so you can drive it without an account. Figures are published
+          only once a run has produced them — anything unmeasured reads <code>not yet run</code>, never a number that
+          merely sounds good.
         </p>
       </footer>
     </main>
