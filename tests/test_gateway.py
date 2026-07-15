@@ -36,26 +36,26 @@ from policy_guarded_ops_agent.llm.gateway import (
 
 
 class TestCompletion:
-    async def test_returns_rule_response(self, gateway: Gateway):
+    async def test_returns_rule_response(self, gateway: Gateway) -> None:
         response = await gateway.acomplete(user_request("What is the capital of France?"))
         assert response.text == "Paris"
         assert response.provider == "fake"
         assert response.attempts == 1
 
-    async def test_unmatched_prompt_is_self_identifying(self, gateway: Gateway):
+    async def test_unmatched_prompt_is_self_identifying(self, gateway: Gateway) -> None:
         # An unmatched prompt must fail assertions loudly, never look like a
         # plausible answer that passes by luck.
         response = await gateway.acomplete(user_request("something with no rule"))
         assert response.text.startswith("[fake:no-rule-matched:")
 
-    async def test_fake_is_deterministic_across_instances(self, spec: ProviderSpec):
+    async def test_fake_is_deterministic_across_instances(self, spec: ProviderSpec) -> None:
         # Determinism is the whole contract of the fake. hash() would break this
         # across processes because it is PYTHONHASHSEED-salted.
         first = await FakeLLMBackend().acomplete(spec, user_request("abc"), timeout_s=30)
         second = await FakeLLMBackend().acomplete(spec, user_request("abc"), timeout_s=30)
         assert first.text == second.text
 
-    async def test_usage_and_cost_are_populated(self, gateway: Gateway):
+    async def test_usage_and_cost_are_populated(self, gateway: Gateway) -> None:
         response = await gateway.acomplete(user_request("ping"))
         assert response.usage.prompt_tokens > 0
         assert response.usage.completion_tokens > 0
@@ -64,7 +64,7 @@ class TestCompletion:
 
 
 class TestRetry:
-    async def test_backoff_schedule_is_1_2_4_8(self, spec: ProviderSpec, instant_sleep):
+    async def test_backoff_schedule_is_1_2_4_8(self, spec: ProviderSpec, instant_sleep) -> None:
         slept, sleeper = instant_sleep
         backend = FakeLLMBackend(
             rules=[FakeRule(contains="ping", response="pong")],
@@ -81,7 +81,7 @@ class TestRetry:
         assert slept == [1.0, 2.0, 4.0, 8.0]
         assert response.attempts == 5
 
-    async def test_retries_on_5xx(self, spec: ProviderSpec, instant_sleep):
+    async def test_retries_on_5xx(self, spec: ProviderSpec, instant_sleep) -> None:
         _, sleeper = instant_sleep
         backend = FakeLLMBackend(
             rules=[FakeRule(contains="ping", response="pong")],
@@ -90,7 +90,7 @@ class TestRetry:
         gateway = Gateway(chain=[spec], backend=backend, sleeper=sleeper, jitter=lambda d: d)
         assert (await gateway.acomplete(user_request("ping"))).text == "pong"
 
-    async def test_does_not_retry_4xx(self, spec: ProviderSpec, instant_sleep):
+    async def test_does_not_retry_4xx(self, spec: ProviderSpec, instant_sleep) -> None:
         slept, sleeper = instant_sleep
         backend = FakeLLMBackend(
             rules=[FakeRule(contains="ping", response="pong")],
@@ -103,7 +103,7 @@ class TestRetry:
         assert slept == []
         assert backend.call_count == 1
 
-    async def test_jitter_is_applied_within_bounds(self, spec: ProviderSpec, instant_sleep):
+    async def test_jitter_is_applied_within_bounds(self, spec: ProviderSpec, instant_sleep) -> None:
         slept, sleeper = instant_sleep
         backend = FakeLLMBackend(
             rules=[FakeRule(contains="ping", response="pong")],
@@ -140,7 +140,7 @@ class TestFallback:
         assert response.provider == "beta"
         assert response.fallback_path == ("alpha",)
 
-    async def test_exhausted_chain_reports_every_cause(self, spec: ProviderSpec, instant_sleep):
+    async def test_exhausted_chain_reports_every_cause(self, spec: ProviderSpec, instant_sleep) -> None:
         _, sleeper = instant_sleep
         backend = FakeLLMBackend(
             failures=[ScriptedFailure(on_call=i, status_code=500) for i in range(1, 30)]
@@ -150,13 +150,13 @@ class TestFallback:
             await gateway.acomplete(user_request("x"))
         assert "fake" in exc_info.value.failures
 
-    def test_empty_chain_is_rejected_with_a_useful_message(self):
+    def test_empty_chain_is_rejected_with_a_useful_message(self) -> None:
         with pytest.raises(ValueError, match="fake_provider_spec"):
             Gateway(chain=[])
 
 
 class TestCircuitBreaker:
-    def test_opens_after_threshold(self):
+    def test_opens_after_threshold(self) -> None:
         now = [0.0]
         breaker = CircuitBreaker(failure_threshold=3, recovery_timeout_s=30, clock=lambda: now[0])
         assert breaker.state is CircuitState.CLOSED
@@ -165,7 +165,7 @@ class TestCircuitBreaker:
         assert breaker.state is CircuitState.OPEN
         assert not breaker.allow()
 
-    def test_half_opens_after_recovery_and_admits_one_probe(self):
+    def test_half_opens_after_recovery_and_admits_one_probe(self) -> None:
         now = [0.0]
         breaker = CircuitBreaker(failure_threshold=1, recovery_timeout_s=30, clock=lambda: now[0])
         breaker.record_failure()
@@ -174,7 +174,7 @@ class TestCircuitBreaker:
         assert breaker.allow()      # first probe admitted
         assert not breaker.allow()  # second is not — only one probe at a time
 
-    def test_success_closes_the_circuit(self):
+    def test_success_closes_the_circuit(self) -> None:
         breaker = CircuitBreaker(failure_threshold=1, recovery_timeout_s=30)
         breaker.record_failure()
         assert breaker.state is CircuitState.OPEN
@@ -204,7 +204,7 @@ class TestCircuitBreaker:
 
 
 class TestRateLimiter:
-    async def test_bucket_allows_burst_then_throttles(self, instant_sleep):
+    async def test_bucket_allows_burst_then_throttles(self, instant_sleep) -> None:
         slept, sleeper = instant_sleep
         now = [0.0]
         bucket = TokenBucket(rate_per_minute=60, burst=2, clock=lambda: now[0], sleeper=sleeper)
@@ -215,7 +215,7 @@ class TestRateLimiter:
         assert waited > 0.0
         assert slept
 
-    def test_rejects_nonsense_rate(self):
+    def test_rejects_nonsense_rate(self) -> None:
         with pytest.raises(ValueError, match="positive"):
             TokenBucket(rate_per_minute=0, burst=1)
 
@@ -237,7 +237,7 @@ class TestBudget:
         assert ledger.unpriced_calls == 1
         assert ledger.spent_usd == Decimal(0)
 
-    async def test_exceeding_budget_refuses_the_request(self):
+    async def test_exceeding_budget_refuses_the_request(self) -> None:
         ledger = BudgetLedger(limit_usd=Decimal("0.01"))
         await ledger.record(Decimal("0.05"))
         gateway = Gateway(
@@ -248,22 +248,22 @@ class TestBudget:
         with pytest.raises(BudgetExceededError):
             await gateway.acomplete(user_request("q"))
 
-    def test_price_spec_subtracts_cached_tokens_from_billable_input(self):
+    def test_price_spec_subtracts_cached_tokens_from_billable_input(self) -> None:
         price = PriceSpec(usd_per_1m_input=Decimal(1), usd_per_1m_output=Decimal(2))
         usage = Usage(prompt_tokens=1_000_000, completion_tokens=0, cached_prompt_tokens=400_000)
         # Only 600k tokens are billable.
         assert price.cost_for(usage) == Decimal("0.6")
 
-    def test_free_tier_is_exactly_zero(self):
+    def test_free_tier_is_exactly_zero(self) -> None:
         price = PriceSpec(is_free_tier=True)
         assert price.cost_for(Usage(prompt_tokens=10**9, completion_tokens=10**9)) == Decimal(0)
 
-    def test_unknown_price_returns_none(self):
+    def test_unknown_price_returns_none(self) -> None:
         assert PriceSpec().cost_for(Usage(prompt_tokens=100)) is None
 
 
 class TestIdempotency:
-    async def test_same_key_is_served_once(self, spec: ProviderSpec):
+    async def test_same_key_is_served_once(self, spec: ProviderSpec) -> None:
         backend = FakeLLMBackend(rules=[FakeRule(contains="once", response="v1")])
         gateway = Gateway(chain=[spec], backend=backend)
         first = await gateway.acomplete(user_request("once", idempotency_key="k"))
@@ -271,7 +271,7 @@ class TestIdempotency:
         assert first.text == second.text
         assert backend.call_count == 1
 
-    async def test_no_key_means_no_dedupe(self, spec: ProviderSpec):
+    async def test_no_key_means_no_dedupe(self, spec: ProviderSpec) -> None:
         backend = FakeLLMBackend(rules=[FakeRule(contains="once", response="v1")])
         gateway = Gateway(chain=[spec], backend=backend)
         await gateway.acomplete(user_request("once"))
@@ -280,7 +280,7 @@ class TestIdempotency:
 
 
 class TestPromptCaching:
-    async def test_cache_hit_is_reported(self, spec: ProviderSpec):
+    async def test_cache_hit_is_reported(self, spec: ProviderSpec) -> None:
         backend = FakeLLMBackend(
             rules=[FakeRule(contains="cached", response="hit", cache_hit=True)]
         )
@@ -295,7 +295,7 @@ class TestPromptCaching:
 
 
 class TestTimeout:
-    async def test_simulated_latency_over_budget_raises_retryable(self, spec: ProviderSpec):
+    async def test_simulated_latency_over_budget_raises_retryable(self, spec: ProviderSpec) -> None:
         backend = FakeLLMBackend(rules=[FakeRule(contains="slow", response="x", latency_ms=60_000)])
         with pytest.raises(ProviderError) as exc_info:
             await backend.acomplete(spec, user_request("slow"), timeout_s=1.0)
@@ -303,15 +303,15 @@ class TestTimeout:
 
 
 class TestDefaultChain:
-    def test_no_keys_yields_empty_chain(self):
+    def test_no_keys_yields_empty_chain(self) -> None:
         # The supported zero-account state: caller falls back to the fake.
         assert build_default_chain(env={}) == ()
 
-    def test_only_configured_providers_are_included(self):
+    def test_only_configured_providers_are_included(self) -> None:
         chain = build_default_chain(env={"GROQ_API_KEY": "x"})
         assert [s.name for s in chain] == ["groq"]
 
-    def test_explicit_chain_order_is_honoured(self):
+    def test_explicit_chain_order_is_honoured(self) -> None:
         chain = build_default_chain(
             env={
                 "LLM_FALLBACK_CHAIN": "gemini,groq",
@@ -321,23 +321,23 @@ class TestDefaultChain:
         )
         assert [s.name for s in chain] == ["gemini", "groq"]
 
-    def test_unknown_provider_name_is_skipped_not_fatal(self):
+    def test_unknown_provider_name_is_skipped_not_fatal(self) -> None:
         chain = build_default_chain(
             env={"LLM_FALLBACK_CHAIN": "nonsense,groq", "GROQ_API_KEY": "x"}
         )
         assert [s.name for s in chain] == ["groq"]
 
-    def test_blank_key_does_not_count_as_configured(self):
+    def test_blank_key_does_not_count_as_configured(self) -> None:
         assert build_default_chain(env={"GROQ_API_KEY": "   "}) == ()
 
-    def test_openrouter_default_model_is_a_free_variant(self):
+    def test_openrouter_default_model_is_a_free_variant(self) -> None:
         # The `:free` suffix is what keeps OpenRouter zero-cost. If this ever
         # regresses, the repo silently starts costing money.
         from policy_guarded_ops_agent.llm.gateway import FREE_TIER_PROVIDERS
 
         assert FREE_TIER_PROVIDERS["openrouter"].model.endswith(":free")
 
-    def test_every_registry_provider_is_free(self):
+    def test_every_registry_provider_is_free(self) -> None:
         from policy_guarded_ops_agent.llm.gateway import FREE_TIER_PROVIDERS
 
         for name, provider in FREE_TIER_PROVIDERS.items():

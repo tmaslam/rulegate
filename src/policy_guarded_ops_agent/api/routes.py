@@ -25,6 +25,7 @@ from typing import TYPE_CHECKING, Any, Final
 
 import structlog
 from fastapi import APIRouter, Depends, HTTPException, Query, status
+from langchain_core.runnables import RunnableConfig
 from langgraph.types import Command
 
 from policy_guarded_ops_agent.agent.state import RunStatus
@@ -281,7 +282,7 @@ async def create_run(
     }
     # thread_id == run_id: one graph thread per run, so an approval targets
     # exactly one paused run and cannot resume a different turn.
-    config = {"configurable": {"thread_id": run_id}}
+    config: RunnableConfig = {"configurable": {"thread_id": run_id}}
     result = await rt.graph.ainvoke(initial, config=config)
 
     approval_id = _extract_interrupt_approval_id(result)
@@ -374,7 +375,7 @@ async def decide_approval(
         # winner already resumed the run — resuming again would double-execute.
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(exc)) from exc
 
-    config = {"configurable": {"thread_id": request.thread_id}}
+    config: RunnableConfig = {"configurable": {"thread_id": request.thread_id}}
     result = await rt.graph.ainvoke(
         Command(resume=decision.model_dump(mode="json")), config=config
     )

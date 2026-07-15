@@ -1,0 +1,52 @@
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--r-2);
+  border: 1px solid var(--border);
+  background: var(--bg-surface);
+  color: var(--text-mid);
+  overflow: hidden;
+  transition: color 0.13s var(--ease), border-color 0.13s var(--ease), background 0.13s var(--ease);
+}
+
+.toggle:hover {
+  color: var(--text-hi);
+  border-color: var(--border-strong);
+  background: var(--bg-hover);
+}
+
+.compact {
+  width: 26px;
+  height: 26px;
+}
+
+/* Two glyphs stacked in one 15px window; the stack slides. Cheaper and
+   steadier than cross-fading two absolutely-positioned icons. */
+.icons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  transition: transform 0.26s var(--ease-out);
+}
+
+.icons[data-theme-state="dark"] {
+  transform: translateY(0);
+}
+
+.icons[data-theme-state="light"] {
+  transform: translateY(-21px);
+}
+
+.compact .icons[data-theme-state="light"] {
+  transform: translateY(-20px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .icons {
+    transition: none;
+  }
+}

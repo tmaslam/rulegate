@@ -1,0 +1,476 @@
+.wrap {
+  padding: var(--s-7) var(--s-7) var(--s-8);
+  max-width: 1600px;
+}
+
+.head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--s-9);
+  margin-bottom: var(--s-7);
+}
+
+.title {
+  font-size: var(--t-20);
+  font-weight: 650;
+  letter-spacing: -0.025em;
+  color: var(--text-hi);
+}
+
+.sub {
+  margin-top: var(--s-2);
+  font-size: var(--t-12);
+  color: var(--text-lo);
+  max-width: 68ch;
+  line-height: 1.55;
+}
+
+.headCount {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  flex: none;
+}
+
+.headCountVal {
+  font-size: var(--t-26);
+  font-weight: 650;
+  color: var(--text-hi);
+  line-height: 1;
+}
+
+.headCountLabel {
+  font-size: 10px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-lo);
+  margin-top: 3px;
+}
+
+/* ── controls ──────────────────────────────────────────────────────────── */
+
+.controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-6);
+  margin-bottom: var(--s-5);
+  flex-wrap: wrap;
+}
+
+.tabs {
+  display: flex;
+  gap: 2px;
+  padding: 2px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-2);
+  background: var(--bg-surface);
+  overflow-x: auto;
+}
+
+.tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 26px;
+  padding: 0 var(--s-5);
+  border-radius: var(--r-1);
+  font-size: var(--t-12);
+  font-weight: 550;
+  color: var(--text-lo);
+  white-space: nowrap;
+  transition: color 0.12s var(--ease), background 0.12s var(--ease);
+}
+
+.tab:hover {
+  color: var(--text-hi);
+  background: var(--bg-hover);
+}
+
+.tab[data-active] {
+  background: var(--bg-hover);
+  color: var(--text-hi);
+  box-shadow: inset 0 -2px 0 var(--accent);
+}
+
+.tabCount {
+  font-size: 10px;
+  color: var(--text-lo);
+  padding: 0 4px;
+  border-radius: 6px;
+  background: var(--bg-base);
+  border: 1px solid var(--border);
+}
+
+.controlsRight {
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+}
+
+.select {
+  display: inline-flex;
+  align-items: center;
+  height: 30px;
+  padding: 0 var(--s-4);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-2);
+  background: var(--bg-surface);
+}
+
+.select select {
+  border: none;
+  background: none;
+  outline: none;
+  font-family: var(--font-mono);
+  font-size: var(--t-11);
+  color: var(--text-mid);
+  cursor: pointer;
+}
+
+.select:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-wash);
+}
+
+.searchBox {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-4);
+  height: 30px;
+  padding: 0 var(--s-5);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-2);
+  background: var(--bg-surface);
+  color: var(--text-lo);
+  min-width: 220px;
+}
+
+.searchBox:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-wash);
+}
+
+.searchBox input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: none;
+  outline: none;
+  font-size: var(--t-12);
+  color: var(--text-hi);
+}
+
+.searchBox input::placeholder {
+  color: var(--text-lo);
+}
+
+/* ── log ───────────────────────────────────────────────────────────────── */
+
+/* Own scroll container. Body never scrolls sideways. */
+.logWrap {
+  border: 1px solid var(--border);
+  border-radius: var(--r-3);
+  background: var(--bg-surface);
+  overflow-x: auto;
+}
+
+.logHead,
+.entryRow {
+  display: grid;
+  grid-template-columns: 128px 104px 88px 190px minmax(280px, 1fr) 26px;
+  gap: var(--s-5);
+  align-items: center;
+  min-width: 900px;
+  padding: 0 var(--s-5);
+}
+
+.logHead {
+  height: 28px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-raised);
+  font-size: 10px;
+  font-weight: 650;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-lo);
+  position: sticky;
+  top: var(--bar-h);
+  z-index: 5;
+}
+
+.entry {
+  border-bottom: 1px solid var(--border-subtle);
+  border-left: 2px solid transparent;
+}
+
+.entry:last-child {
+  border-bottom: none;
+}
+
+/* A denied policy check is the row you are scanning for. Give it a rail. */
+.entry[data-effect="deny"] {
+  border-left-color: var(--deny);
+  background: var(--deny-wash);
+}
+
+.entry[data-effect="escalate"] {
+  border-left-color: var(--escalate);
+}
+
+.entry[data-kind="human"] {
+  border-left-color: var(--accent);
+  background: var(--accent-wash);
+}
+
+.entryRow {
+  width: 100%;
+  height: 30px;
+  text-align: left;
+  transition: background 0.1s var(--ease);
+}
+
+.entryRow:hover {
+  background: var(--bg-hover);
+}
+
+.entryRow:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
+.ts {
+  font-size: var(--t-11);
+  color: var(--text-lo);
+  white-space: nowrap;
+}
+
+.kind {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-mid);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Kind is carried by a shape+position pair as well as the hue — the dot has a
+   distinct border style per kind so it survives greyscale. */
+.kindDot {
+  width: 6px;
+  height: 6px;
+  flex: none;
+  border: 1px solid currentColor;
+}
+
+.kindDot[data-kind="request"] {
+  border-radius: 50%;
+  color: var(--text-lo);
+}
+
+.kindDot[data-kind="tool_call"] {
+  border-radius: 1px;
+  color: var(--tool);
+  background: var(--tool);
+}
+
+.kindDot[data-kind="policy_check"] {
+  border-radius: 1px;
+  transform: rotate(45deg);
+  color: var(--text-mid);
+}
+
+.kindDot[data-kind="decision"] {
+  border-radius: 50%;
+  color: var(--text-hi);
+  background: var(--text-hi);
+}
+
+.kindDot[data-kind="execution"] {
+  border-radius: 1px;
+  color: var(--text-mid);
+  background: var(--text-mid);
+}
+
+.kindDot[data-kind="human"] {
+  border-radius: 50%;
+  color: var(--accent);
+  background: var(--accent);
+}
+
+.actionRef {
+  font-family: var(--font-mono);
+  font-size: var(--t-11);
+  color: var(--text-mid);
+  white-space: nowrap;
+}
+
+.actor {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-mono);
+  font-size: var(--t-11);
+  color: var(--text-lo);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.summary {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-4);
+  min-width: 0;
+}
+
+.summaryText {
+  font-family: var(--font-mono);
+  font-size: var(--t-11);
+  color: var(--text-hi);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chev {
+  display: grid;
+  place-items: center;
+  color: var(--text-lo);
+  transition: transform 0.14s var(--ease);
+}
+
+.chev[data-open] {
+  transform: rotate(90deg);
+  color: var(--accent);
+}
+
+/* ── expanded detail ───────────────────────────────────────────────────── */
+
+.detail {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--s-6);
+  padding: var(--s-5) var(--s-5) var(--s-5) 132px;
+  border-top: 1px dashed var(--border);
+  background: var(--bg-inset);
+  min-width: 900px;
+}
+
+.detailBody {
+  flex: 1;
+  min-width: 0;
+}
+
+.detailLabel {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-lo);
+  margin-bottom: 3px;
+}
+
+.detailText {
+  font-family: var(--font-mono);
+  font-size: var(--t-11);
+  line-height: 1.65;
+  color: var(--text-mid);
+  word-break: break-word;
+}
+
+.detailMeta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--s-3);
+  flex: none;
+}
+
+.metaLink,
+.metaTag {
+  font-size: 10px;
+  color: var(--text-lo);
+  white-space: nowrap;
+}
+
+.metaLink:hover {
+  color: var(--accent);
+}
+
+.metaLink code,
+.metaTag code {
+  font-family: var(--font-mono);
+  color: var(--text-mid);
+}
+
+/* ── empty / foot ──────────────────────────────────────────────────────── */
+
+.empty {
+  padding: var(--s-11) var(--s-6);
+  text-align: center;
+}
+
+.empty p {
+  font-size: var(--t-13);
+  color: var(--text-mid);
+}
+
+.empty span {
+  display: block;
+  margin-top: var(--s-3);
+  font-size: var(--t-11);
+  color: var(--text-lo);
+}
+
+.foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: var(--s-5);
+  font-size: var(--t-11);
+  color: var(--text-lo);
+}
+
+.foot span span {
+  color: var(--text-mid);
+}
+
+.footNote {
+  color: var(--text-lo);
+}
+
+@media (max-width: 900px) {
+  .wrap {
+    padding: var(--s-6) var(--s-5) var(--s-8);
+  }
+
+  .head {
+    flex-direction: column;
+    gap: var(--s-5);
+  }
+
+  .headCount {
+    align-items: flex-start;
+  }
+
+  .controlsRight {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+  }
+
+  .searchBox {
+    min-width: 0;
+  }
+
+  .logHead {
+    position: static;
+  }
+}

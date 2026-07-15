@@ -1,0 +1,32 @@
+.split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 440px;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+.heroSide {
+  min-width: 0;
+}
+
+.formSide {
+  min-width: 0;
+}
+
+@media (max-width: 1080px) {
+  .split {
+    grid-template-columns: 1fr;
+    /* Form first on narrow screens: the way in beats the pitch. Order is
+       overridden visually only — the DOM keeps hero-then-form so the tab order
+       still reaches the skip link and the form immediately. */
+    grid-template-rows: auto auto;
+  }
+
+  .heroSide {
+    order: 2;
+  }
+
+  .formSide {
+    order: 1;
+  }
+}

@@ -1,0 +1,63 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 7px 2px 6px;
+  border-radius: var(--r-1);
+  font-size: var(--t-11);
+  font-weight: 600;
+  letter-spacing: 0.012em;
+  line-height: 1.45;
+  white-space: nowrap;
+  border: 1px solid transparent;
+  /* The left rail is a fourth signal and survives at 1px on a bad screen. */
+  border-left-width: 2px;
+}
+
+.sm {
+  padding: 1px 5px 1px 4px;
+  font-size: 10px;
+  gap: 4px;
+}
+
+.glyph {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.allow {
+  color: var(--allow);
+  background: var(--allow-wash);
+  border-color: var(--allow-edge);
+  border-left-color: var(--allow);
+}
+
+.escalate {
+  color: var(--escalate);
+  background: var(--escalate-wash);
+  border-color: var(--escalate-edge);
+  border-left-color: var(--escalate);
+}
+
+.deny {
+  color: var(--deny);
+  background: var(--deny-wash);
+  border-color: var(--deny-edge);
+  border-left-color: var(--deny);
+}
+
+.pending {
+  color: var(--text-mid);
+  background: var(--bg-hover);
+  border-color: var(--border);
+  border-left-color: var(--border-strong);
+}
+
+.glyph.allow,
+.glyph.escalate,
+.glyph.deny,
+.glyph.pending {
+  background: none;
+  border: none;
+}

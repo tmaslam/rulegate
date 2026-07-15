@@ -1,0 +1,423 @@
+/* ==========================================================================
+   PolicyGuard — design tokens + base
+   ==========================================================================
+
+   Identity: a dense operational console. Dark-first — the dark theme is the
+   design, light is the alternate. Built for someone who keeps this open for
+   eight hours and reads it at 2am, not for someone scrolling a landing page.
+
+   Chassis is WARM CARBON (hue ~50, sat ~6%) rather than the cool slate every
+   other dashboard reaches for. Under a warm neutral the signal hues read as
+   deliberately placed instrumentation rather than decoration.
+
+   Accent is ACID LIME — the brand/interactive colour, and it is rationed.
+   Focus rings, the active nav rail, one primary button per screen, the mark.
+   Nothing else. If lime is on screen twice, one of them is a bug.
+
+   Semantic hues carry policy outcomes only:
+     mint  = allow      amber = escalate     rose = deny      cyan = tool I/O
+   Colour is never the sole signal: every state also carries a glyph and a
+   text label. See <Effect> in components/Effect.tsx.
+
+   Every foreground/background pair below is validated >= WCAG AA (4.5:1 body,
+   3:1 for boundaries that are themselves the affordance) in BOTH themes.
+   ========================================================================== */
+
+/* ---- LAYER 1: raw ramps. Theme-independent. Components never touch these. -- */
+:root {
+  /* Warm carbon */
+  --c-950: #0a0a08;
+  --c-900: #100f0d;
+  --c-850: #161614;
+  --c-800: #1d1d1a;
+  --c-750: #242421;
+  --c-700: #2c2c27;
+  --c-600: #3a3a33;
+  --c-500: #6b6b61;
+  --c-400: #948f84;
+  --c-300: #b0ada2;
+  --c-200: #d2cfc4;
+  --c-100: #e6e4da;
+  --c-50: #f2f1ea;
+  --c-25: #f8f7f2;
+  --c-0: #fffffb;
+
+  /* Acid lime — the accent */
+  --lime-300: #d8f77e;
+  --lime-400: #c8f24e;
+  --lime-500: #a9d431;
+  --lime-600: #7d9e1c;
+  --lime-700: #5a7508;
+  --lime-800: #44590a;
+
+  /* Signal hues */
+  --mint-400: #3ddba0;
+  --mint-700: #0d7a52;
+  --amber-400: #f5b53f;
+  --amber-700: #8a5a06;
+  --rose-400: #fb7176;
+  --rose-700: #c02a30;
+  --cyan-400: #5cc9ee;
+  --cyan-700: #116e8c;
+
+  /* Type — system stacks only. No webfont fetch: this is a static export and
+     a blocked font request must never cost a layout shift on an ops console. */
+  --font-ui: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    "Inter", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "JetBrains Mono", "Cascadia Mono",
+    "Cascadia Code", Menlo, Consolas, "Liberation Mono", monospace;
+
+  /* Density scale. Small and tight on purpose — this is a power tool. */
+  --t-11: 0.6875rem;
+  --t-12: 0.75rem;
+  --t-13: 0.8125rem;
+  --t-14: 0.875rem;
+  --t-16: 1rem;
+  --t-20: 1.25rem;
+  --t-26: 1.625rem;
+  --t-34: 2.125rem;
+  --t-44: 2.75rem;
+
+  --s-1: 2px;
+  --s-2: 4px;
+  --s-3: 6px;
+  --s-4: 8px;
+  --s-5: 12px;
+  --s-6: 16px;
+  --s-7: 20px;
+  --s-8: 24px;
+  --s-9: 32px;
+  --s-10: 44px;
+  --s-11: 64px;
+
+  --r-1: 3px;
+  --r-2: 5px;
+  --r-3: 8px;
+  --r-4: 12px;
+
+  --rail-w: 52px;
+  --bar-h: 46px;
+
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ---- LAYER 2: semantic tokens. DARK is the default and the primary design. */
+:root,
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --bg-base: var(--c-950);
+  --bg-canvas: var(--c-900);
+  --bg-surface: var(--c-850);
+  --bg-raised: var(--c-800);
+  --bg-hover: var(--c-750);
+  --bg-inset: #0c0c0a;
+
+  --text-hi: var(--c-50);
+  --text-mid: var(--c-300);
+  --text-lo: var(--c-400);
+  --text-inverse: var(--c-950);
+
+  --border: var(--c-700);
+  --border-subtle: #201f1c;
+  --border-strong: var(--c-500);
+
+  --accent: var(--lime-400);
+  --accent-quiet: var(--lime-500);
+  --accent-fg: var(--c-950);
+  --accent-wash: rgba(200, 242, 78, 0.1);
+  --accent-edge: rgba(200, 242, 78, 0.32);
+
+  --allow: var(--mint-400);
+  --allow-wash: rgba(61, 219, 160, 0.11);
+  --allow-edge: rgba(61, 219, 160, 0.3);
+
+  --escalate: var(--amber-400);
+  --escalate-wash: rgba(245, 181, 63, 0.11);
+  --escalate-edge: rgba(245, 181, 63, 0.3);
+
+  --deny: var(--rose-400);
+  --deny-wash: rgba(251, 113, 118, 0.11);
+  --deny-edge: rgba(251, 113, 118, 0.32);
+
+  --tool: var(--cyan-400);
+  --tool-wash: rgba(92, 201, 238, 0.1);
+  --tool-edge: rgba(92, 201, 238, 0.28);
+
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.5);
+  --shadow-2: 0 4px 14px rgba(0, 0, 0, 0.5);
+  --shadow-3: 0 18px 50px rgba(0, 0, 0, 0.62);
+  --grid-line: rgba(255, 255, 255, 0.026);
+}
+
+/* ---- LIGHT — the alternate. Warm paper, not white. ---------------------- */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    color-scheme: light;
+
+    --bg-base: var(--c-50);
+    --bg-canvas: var(--c-25);
+    --bg-surface: var(--c-0);
+    --bg-raised: #ffffff;
+    --bg-hover: #f0efe8;
+    --bg-inset: #f4f3ec;
+
+    --text-hi: #17170f;
+    --text-mid: #57564c;
+    --text-lo: #6e6d62;
+    --text-inverse: var(--c-0);
+
+    --border: #e0dfd4;
+    --border-subtle: #ebeae0;
+    --border-strong: #8d8c80;
+
+    --accent: var(--lime-700);
+    --accent-quiet: var(--lime-800);
+    --accent-fg: var(--c-0);
+    --accent-wash: rgba(90, 117, 8, 0.09);
+    --accent-edge: rgba(90, 117, 8, 0.3);
+
+    --allow: var(--mint-700);
+    --allow-wash: rgba(13, 122, 82, 0.08);
+    --allow-edge: rgba(13, 122, 82, 0.28);
+
+    --escalate: var(--amber-700);
+    --escalate-wash: rgba(138, 90, 6, 0.08);
+    --escalate-edge: rgba(138, 90, 6, 0.28);
+
+    --deny: var(--rose-700);
+    --deny-wash: rgba(192, 42, 48, 0.07);
+    --deny-edge: rgba(192, 42, 48, 0.28);
+
+    --tool: var(--cyan-700);
+    --tool-wash: rgba(17, 110, 140, 0.07);
+    --tool-edge: rgba(17, 110, 140, 0.26);
+
+    --shadow-1: 0 1px 2px rgba(40, 38, 26, 0.08);
+    --shadow-2: 0 4px 14px rgba(40, 38, 26, 0.1);
+    --shadow-3: 0 18px 50px rgba(40, 38, 26, 0.16);
+    --grid-line: rgba(23, 23, 15, 0.032);
+  }
+}
+
+/* Explicit override wins in both directions — declared last, same specificity. */
+:root[data-theme="light"] {
+  color-scheme: light;
+
+  --bg-base: var(--c-50);
+  --bg-canvas: var(--c-25);
+  --bg-surface: var(--c-0);
+  --bg-raised: #ffffff;
+  --bg-hover: #f0efe8;
+  --bg-inset: #f4f3ec;
+
+  --text-hi: #17170f;
+  --text-mid: #57564c;
+  --text-lo: #6e6d62;
+  --text-inverse: var(--c-0);
+
+  --border: #e0dfd4;
+  --border-subtle: #ebeae0;
+  --border-strong: #8d8c80;
+
+  --accent: var(--lime-700);
+  --accent-quiet: var(--lime-800);
+  --accent-fg: var(--c-0);
+  --accent-wash: rgba(90, 117, 8, 0.09);
+  --accent-edge: rgba(90, 117, 8, 0.3);
+
+  --allow: var(--mint-700);
+  --allow-wash: rgba(13, 122, 82, 0.08);
+  --allow-edge: rgba(13, 122, 82, 0.28);
+
+  --escalate: var(--amber-700);
+  --escalate-wash: rgba(138, 90, 6, 0.08);
+  --escalate-edge: rgba(138, 90, 6, 0.28);
+
+  --deny: var(--rose-700);
+  --deny-wash: rgba(192, 42, 48, 0.07);
+  --deny-edge: rgba(192, 42, 48, 0.28);
+
+  --tool: var(--cyan-700);
+  --tool-wash: rgba(17, 110, 140, 0.07);
+  --tool-edge: rgba(17, 110, 140, 0.26);
+
+  --shadow-1: 0 1px 2px rgba(40, 38, 26, 0.08);
+  --shadow-2: 0 4px 14px rgba(40, 38, 26, 0.1);
+  --shadow-3: 0 18px 50px rgba(40, 38, 26, 0.16);
+  --grid-line: rgba(23, 23, 15, 0.032);
+}
+
+/* ---- Reset / base ------------------------------------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  background: var(--bg-base);
+  color: var(--text-hi);
+  font-family: var(--font-ui);
+  font-size: var(--t-13);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-synthesis-weight: none;
+  /* Requirement: the body itself never scrolls sideways. Wide tables, SQL and
+     traces each own an overflow-x container instead. */
+  overflow-x: hidden;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.014em;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+svg {
+  display: block;
+  flex: none;
+}
+
+/* Focus: one visible ring, everywhere, no exceptions. Two-tone so it survives
+   on both the lime accent and every signal wash. */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: var(--r-1);
+}
+
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+::selection {
+  background: var(--accent-wash);
+  color: var(--text-hi);
+}
+
+/* Numbers in an ops console line up or they are useless. */
+.tnum {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+.mono {
+  font-family: var(--font-mono);
+  letter-spacing: -0.01em;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Skip link — first tab stop on every page. */
+.skip {
+  position: fixed;
+  top: -100px;
+  left: var(--s-5);
+  z-index: 200;
+  padding: var(--s-4) var(--s-6);
+  background: var(--accent);
+  color: var(--accent-fg);
+  font-size: var(--t-12);
+  font-weight: 650;
+  border-radius: 0 0 var(--r-2) var(--r-2);
+  transition: top 0.14s var(--ease);
+}
+
+.skip:focus {
+  top: 0;
+}
+
+/* Custom scrollbars — a dense console with fat default bars looks cheap. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--c-600) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 5px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--border-strong);
+  background-clip: content-box;
+}
+
+/* Reduced motion: kill it at the source. The GSAP setups early-return; this
+   catches CSS transitions and anything that slipped through. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

@@ -56,7 +56,7 @@ def ledger() -> BudgetLedger:
 
 
 @pytest.fixture(autouse=True)
-def _no_provider_keys(monkeypatch: pytest.MonkeyPatch) -> Iterator[None]:
+def _no_provider_keys(monkeypatch: pytest.MonkeyPatch) -> None:
     """Guarantee no test can accidentally reach a real provider.
 
     Autouse and non-negotiable: if a developer has GROQ_API_KEY exported in their
@@ -75,4 +75,3 @@ def _no_provider_keys(monkeypatch: pytest.MonkeyPatch) -> Iterator[None]:
         "LANGFUSE_SECRET_KEY",
     ):
         monkeypatch.delenv(var, raising=False)
-    return

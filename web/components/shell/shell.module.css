@@ -1,0 +1,353 @@
+.booting {
+  min-height: 100dvh;
+  background: var(--bg-base);
+}
+
+.shell {
+  display: grid;
+  grid-template-columns: var(--rail-w) minmax(0, 1fr);
+  min-height: 100dvh;
+  background: var(--bg-base);
+}
+
+/* ── rail ──────────────────────────────────────────────────────────────── */
+
+.rail {
+  position: sticky;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s-5);
+  height: 100dvh;
+  padding: var(--s-5) 0;
+  border-right: 1px solid var(--border);
+  background: var(--bg-canvas);
+  z-index: 30;
+}
+
+.railMark {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--r-2);
+  color: var(--accent);
+  transition: background 0.13s var(--ease);
+}
+
+.railMark:hover {
+  background: var(--accent-wash);
+}
+
+.railNav {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  width: 100%;
+  align-items: center;
+}
+
+.railLink {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--r-2);
+  color: var(--text-lo);
+  transition: color 0.13s var(--ease), background 0.13s var(--ease);
+}
+
+.railLink:hover {
+  color: var(--text-hi);
+  background: var(--bg-hover);
+}
+
+/* Active is a lime rail on the edge + a lit glyph. Two signals, and the rail
+   reads at a glance from across a desk. */
+.railLink[data-active] {
+  color: var(--accent);
+  background: var(--accent-wash);
+}
+
+.railLink[data-active]::before {
+  content: "";
+  position: absolute;
+  left: -10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 2px;
+  height: 18px;
+  border-radius: 0 2px 2px 0;
+  background: var(--accent);
+}
+
+.railTip {
+  position: absolute;
+  left: calc(100% + 10px);
+  top: 50%;
+  transform: translateY(-50%) translateX(-4px);
+  padding: 3px 8px;
+  border-radius: var(--r-1);
+  border: 1px solid var(--border);
+  background: var(--bg-raised);
+  color: var(--text-hi);
+  font-size: var(--t-11);
+  font-weight: 600;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  box-shadow: var(--shadow-2);
+  transition: opacity 0.12s var(--ease), transform 0.12s var(--ease);
+  z-index: 40;
+}
+
+.railLink:hover .railTip,
+.railLink:focus-visible .railTip {
+  opacity: 1;
+  transform: translateY(-50%) translateX(0);
+}
+
+.railBadge {
+  position: absolute;
+  top: -2px;
+  right: -3px;
+  min-width: 15px;
+  height: 15px;
+  padding: 0 3px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  background: var(--escalate);
+  color: var(--c-950);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  line-height: 1;
+  border: 1.5px solid var(--bg-canvas);
+}
+
+.railFoot {
+  margin-top: auto;
+}
+
+/* ── column ────────────────────────────────────────────────────────────── */
+
+.column {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.bar {
+  position: sticky;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-6);
+  height: var(--bar-h);
+  padding: 0 var(--s-6);
+  border-bottom: 1px solid var(--border);
+  background: color-mix(in srgb, var(--bg-canvas) 88%, transparent);
+  backdrop-filter: blur(12px);
+  z-index: 20;
+}
+
+.search {
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+  height: 28px;
+  min-width: 260px;
+  padding: 0 var(--s-3) 0 var(--s-4);
+  border-radius: var(--r-2);
+  border: 1px solid var(--border);
+  background: var(--bg-surface);
+  color: var(--text-lo);
+  transition: border-color 0.13s var(--ease), color 0.13s var(--ease);
+}
+
+.search:hover {
+  border-color: var(--border-strong);
+  color: var(--text-mid);
+}
+
+.searchText {
+  flex: 1;
+  text-align: left;
+  font-size: var(--t-12);
+}
+
+.kbd {
+  display: grid;
+  place-items: center;
+  min-width: 17px;
+  height: 17px;
+  padding: 0 4px;
+  border-radius: 3px;
+  border: 1px solid var(--border);
+  background: var(--bg-hover);
+  color: var(--text-lo);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  line-height: 1;
+}
+
+.barRight {
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+}
+
+.cmdBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  height: 24px;
+  padding: 0 7px;
+  border-radius: var(--r-1);
+  border: 1px solid var(--border);
+  background: var(--bg-surface);
+  color: var(--text-lo);
+  font-family: var(--font-mono);
+  font-size: var(--t-11);
+  transition: color 0.13s var(--ease), border-color 0.13s var(--ease);
+}
+
+.cmdBtn:hover {
+  color: var(--text-hi);
+  border-color: var(--border-strong);
+}
+
+.divider {
+  width: 1px;
+  height: 18px;
+  background: var(--border);
+}
+
+.user {
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+}
+
+.avatar {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: var(--r-2);
+  background: var(--accent-wash);
+  border: 1px solid var(--accent-edge);
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.userText {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.3;
+}
+
+.userText strong {
+  font-size: var(--t-12);
+  font-weight: 600;
+  color: var(--text-hi);
+}
+
+.userText span {
+  font-size: 10px;
+  color: var(--text-lo);
+}
+
+.iconBtn {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: var(--r-2);
+  border: 1px solid transparent;
+  color: var(--text-lo);
+  transition: color 0.13s var(--ease), background 0.13s var(--ease), border-color 0.13s var(--ease);
+}
+
+.iconBtn:hover {
+  color: var(--deny);
+  background: var(--deny-wash);
+  border-color: var(--deny-edge);
+}
+
+.view {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ── responsive: rail goes horizontal along the bottom on phones ───────── */
+
+@media (max-width: 720px) {
+  .shell {
+    grid-template-columns: 1fr;
+  }
+
+  .rail {
+    position: fixed;
+    bottom: 0;
+    top: auto;
+    left: 0;
+    right: 0;
+    flex-direction: row;
+    justify-content: space-around;
+    height: 54px;
+    padding: 0 var(--s-5);
+    border-right: none;
+    border-top: 1px solid var(--border);
+  }
+
+  .railMark {
+    display: none;
+  }
+
+  .railNav {
+    flex-direction: row;
+    gap: var(--s-5);
+    justify-content: center;
+  }
+
+  .railLink[data-active]::before {
+    left: 50%;
+    top: -1px;
+    transform: translateX(-50%);
+    width: 18px;
+    height: 2px;
+    border-radius: 0 0 2px 2px;
+  }
+
+  .railTip {
+    display: none;
+  }
+
+  .railFoot {
+    margin-top: 0;
+  }
+
+  .view {
+    padding-bottom: 54px;
+  }
+
+  .userText {
+    display: none;
+  }
+
+  .search {
+    min-width: 0;
+  }
+
+  .searchText {
+    display: none;
+  }
+}

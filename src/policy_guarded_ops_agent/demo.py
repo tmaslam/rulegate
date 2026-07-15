@@ -30,7 +30,6 @@ import asyncio
 import sys
 import tempfile
 import uuid
-from decimal import Decimal
 from pathlib import Path
 from typing import TYPE_CHECKING, Final
 

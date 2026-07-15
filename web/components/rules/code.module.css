@@ -1,0 +1,106 @@
+.wrap {
+  border: 1px solid var(--border);
+  border-radius: var(--r-2);
+  background: var(--bg-inset);
+  overflow: hidden;
+}
+
+.label {
+  display: flex;
+  align-items: center;
+  gap: var(--s-5);
+  padding: var(--s-3) var(--s-5);
+  border-bottom: 1px solid var(--border-subtle);
+  background: var(--bg-raised);
+}
+
+.label code {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-lo);
+}
+
+.dots {
+  display: inline-flex;
+  gap: 4px;
+}
+
+.dots i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  border: 1px solid var(--border-strong);
+}
+
+.pre {
+  overflow-x: auto;
+  padding: var(--s-5) 0;
+  font-family: var(--font-mono);
+  font-size: var(--t-11);
+  line-height: 1.65;
+  tab-size: 4;
+}
+
+.pre:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
+.line {
+  display: flex;
+  min-width: max-content;
+}
+
+.line:hover {
+  background: var(--bg-hover);
+}
+
+.ln {
+  flex: none;
+  width: 38px;
+  padding-right: var(--s-5);
+  text-align: right;
+  color: var(--text-lo);
+  opacity: 0.55;
+  user-select: none;
+}
+
+.code {
+  flex: 1;
+  padding-right: var(--s-6);
+  white-space: pre;
+  color: var(--text-mid);
+}
+
+/* Token colours. Deliberately restrained — this is a console, not a themed
+   editor, and a rule someone has to read at 2am should not be a rainbow. */
+.kw {
+  color: var(--accent-quiet);
+  font-weight: 600;
+}
+
+.str {
+  color: var(--allow);
+}
+
+.comment {
+  color: var(--text-lo);
+  font-style: italic;
+  opacity: 0.8;
+}
+
+.num {
+  color: var(--tool);
+}
+
+.cls {
+  color: var(--text-hi);
+}
+
+.builtin {
+  color: var(--tool);
+}
+
+.plain {
+  color: var(--text-mid);
+}
