@@ -149,7 +149,9 @@ export default function Landing() {
         <div className={s.heroGlow} aria-hidden="true" />
         <p className={`${s.eyebrow} ${s.heroLine}`}>Policy-guarded operations agent</p>
         <h1 className={s.h1}>
-          <span className={s.heroLine}>Your AI agent will</span>
+          {/* The {" "} is load-bearing: JSX drops whitespace between elements on
+              separate lines, so without it the spans render as "willbreak". */}
+          <span className={s.heroLine}>Your AI agent will</span>{" "}
           <span className={`${s.heroLine} ${s.accentText}`}>break your business rules.</span>
         </h1>
         <p className={`${s.sub} ${s.heroFade}`}>

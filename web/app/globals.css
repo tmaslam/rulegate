@@ -69,11 +69,14 @@
   --cyan-400: #5cc9ee;
   --cyan-700: #116e8c;
 
-  /* Type — system stacks only. No webfont fetch: this is a static export and
-     a blocked font request must never cost a layout shift on an ops console. */
-  --font-ui: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI",
-    "Inter", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --font-mono: ui-monospace, "SF Mono", "JetBrains Mono", "Cascadia Mono",
+  /* Type. Real Inter and JetBrains Mono via next/font, which downloads them at
+     BUILD time and serves them from our own origin — so there is still no
+     third-party request at runtime. The system stack stays behind them as the
+     fallback. A system stack alone resolved to Segoe UI on Windows, whose
+     metrics are not Inter's, and no amount of tuning made the page match. */
+  --font-ui: var(--font-inter), ui-sans-serif, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, "SF Mono", "Cascadia Mono",
     "Cascadia Code", Menlo, Consolas, "Liberation Mono", monospace;
 
   /* Density scale. Small and tight on purpose — this is a power tool. */

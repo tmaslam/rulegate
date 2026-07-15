@@ -7,8 +7,9 @@
    the page uses BOTH, so every band shares one left edge and one right edge.
    Change them here and the whole page stays aligned. */
 :root {
-  --shell: 1240px;
-  --gutter: clamp(1rem, 4vw, 2.5rem);
+  --shell: 1120px;   /* Framer container */
+  --gutter: clamp(16px, 3vw, 32px);  /* Framer: 32px at desktop */
+  --measure: 760px;  /* Framer text column */
 }
 
 
@@ -113,7 +114,7 @@
   position: relative;
   overflow: hidden;
   text-align: center;
-  padding: clamp(3.5rem, 9vh, 6rem) var(--gutter) clamp(3rem, 7vh, 4.5rem);
+  padding: clamp(64px, 9vw, 112px) var(--gutter) clamp(48px, 7vw, 84px);
 }
 
 /* A single soft blue bloom. Not a gradient soup. */
@@ -150,10 +151,10 @@
 .h1 {
   position: relative;
   margin: 0 auto 1.5rem;
-  max-width: 15ch;
-  font-size: clamp(2.6rem, 6.2vw, 4.4rem);
-  line-height: 1.04;
-  letter-spacing: -0.038em;
+  max-width: 980px;
+  font-size: clamp(38px, 7.4vw, 74px);
+  line-height: 1.2;
+  letter-spacing: -0.03em;
   font-weight: 700;
   color: var(--text-hi);
   text-wrap: balance;
@@ -171,9 +172,9 @@
 .sub {
   position: relative;
   margin: 0 auto 2.2rem;
-  max-width: 62ch;
-  font-size: clamp(1rem, 1.6vw, 1.15rem);
-  line-height: 1.62;
+  max-width: var(--measure);
+  font-size: 16px;
+  line-height: 1.6;
   color: var(--text-mid);
 }
 
@@ -254,12 +255,12 @@
 .section {
   max-width: var(--shell);
   margin: 0 auto;
-  padding: clamp(3rem, 9vh, 6rem) var(--gutter);
+  padding: clamp(40px, 5.5vw, 64px) var(--gutter);
 }
 
 .sectionHead {
   text-align: center;
-  max-width: 66ch;
+  max-width: var(--measure);
   margin: 0 auto clamp(2rem, 5vh, 3.2rem);
 }
 
@@ -278,18 +279,18 @@
 
 .h2 {
   margin: 0 0 0.9rem;
-  font-size: clamp(1.6rem, 3.6vw, 2.5rem);
-  line-height: 1.12;
-  letter-spacing: -0.03em;
-  font-weight: 660;
+  font-size: clamp(26px, 3.6vw, 40px);
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+  font-weight: 700;
   color: var(--text-hi);
 }
 
 .sectionSub {
   margin: 0 auto;
-  max-width: 62ch;
-  font-size: 0.98rem;
-  line-height: 1.65;
+  max-width: var(--measure);
+  font-size: 16px;
+  line-height: 1.6;
   color: var(--text-lo);
 }
 
@@ -298,12 +299,12 @@
 .splitGrid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
-  gap: 1rem;
+  gap: 16px;
 }
 
 .splitCard {
   border-radius: 14px;
-  padding: 1.3rem;
+  padding: 22px;
   border: 1px solid var(--border, rgba(255, 255, 255, 0.1));
   background: var(--bg-surface);
 }
@@ -366,12 +367,12 @@
   padding: 0;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
-  gap: 1rem;
+  gap: 16px;
   counter-reset: step;
 }
 
 .step {
-  padding: 1.4rem;
+  padding: 22px;
   border-radius: 14px;
   border: 1px solid var(--border, rgba(255, 255, 255, 0.09));
   background: var(--bg-surface);
@@ -493,13 +494,13 @@
 .proofGrid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
-  gap: 1rem;
+  gap: 16px;
   margin: 2rem 0;
   text-align: left;
 }
 
 .proofCard {
-  padding: 1.3rem;
+  padding: 22px;
   border-radius: 12px;
   background: var(--bg-inset);
   border: 1px solid var(--border, rgba(255, 255, 255, 0.08));
@@ -565,11 +566,11 @@
 .featGrid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
-  gap: 1rem;
+  gap: 16px;
 }
 
 .feat {
-  padding: 1.3rem;
+  padding: 22px;
   border-radius: 12px;
   border: 1px solid var(--border, rgba(255, 255, 255, 0.09));
   background: var(--bg-surface);
@@ -730,8 +731,8 @@
 .panel {
   background: var(--bg-surface);
   border: 1px solid var(--border);
-  border-radius: clamp(14px, 2vw, 22px);
-  padding: clamp(1.75rem, 5vw, 3.5rem) clamp(1.25rem, 4vw, 3rem);
+  border-radius: 14px;
+  padding: clamp(28px, 5.5vw, 64px) clamp(20px, 3vw, 32px);
   box-shadow: var(--shadow-1);
 }
 

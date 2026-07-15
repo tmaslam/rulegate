@@ -1,5 +1,25 @@
 import type { Metadata, Viewport } from "next";
+import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+
+/* Real Inter and JetBrains Mono, not a system stack.
+   The system stack resolved to Segoe UI on Windows, which is a different
+   typeface with different metrics — the reason this page never quite matched
+   the design however the numbers were tuned.
+   next/font fetches these at BUILD time and serves them from our own origin, so
+   there is still no third-party request at runtime and nothing to be blocked;
+   the variables below are consumed by --font-ui / --font-mono in globals.css. */
+const inter = Inter({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-inter",
+});
+
+const jetbrains = JetBrains_Mono({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-jetbrains",
+});
 
 export const metadata: Metadata = {
   title: {
@@ -27,7 +47,7 @@ const THEME_SCRIPT = `(function(){try{var t=localStorage.getItem('rulegate.theme
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" className={`${inter.variable} ${jetbrains.variable}`} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
       </head>
