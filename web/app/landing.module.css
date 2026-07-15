@@ -141,6 +141,7 @@
   padding: 8px 14px;
   border-radius: 999px;
   background: rgba(59, 130, 246, 0.12);
+  border: 1px solid rgba(59, 130, 246, 0.3);
 }
 
 /* Not a flex column: the accent has to start mid-line, the way it reads aloud —
@@ -177,8 +178,8 @@
 }
 
 .sub strong {
-  color: var(--text-hi);
-  font-weight: 620;
+  color: inherit;
+  font-weight: inherit;
 }
 
 .ctas {
@@ -245,7 +246,7 @@
 }
 
 .trust svg {
-  color: var(--accent);
+  color: var(--text-lo);
 }
 
 /* ---------------- sections ---------------- */

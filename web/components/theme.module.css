@@ -91,3 +91,10 @@
 .labelled:hover {
   background: rgba(59, 130, 246, 0.2);
 }
+
+/* The glyph was inheriting --text-mid while the label next to it was --accent:
+   one chip, two colours. */
+.labelled,
+.labelled .icons {
+  color: var(--accent);
+}
