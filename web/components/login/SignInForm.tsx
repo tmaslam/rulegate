@@ -125,7 +125,8 @@ export function SignInForm() {
 
       <footer className={styles.panelFoot}>
         <p>
-          Demo build. The console runs on fixture data — no live billing system is attached.{" "}
+          Open access — the console runs on a seeded billing dataset, so you can drive it end to end
+          without an account.{" "}
           <a
             href="https://github.com/tmaslam/rulegate"
             target="_blank"

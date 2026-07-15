@@ -200,8 +200,9 @@ export function RulesView() {
 
       <footer className={styles.pageFoot}>
         <p>
-          Demo build on fixture data — no live billing system is attached, and no measurements of
-          this system&rsquo;s quality appear anywhere in it. The rule code above is the real code.{" "}
+          The rule code above is the code that runs — read straight from the engine, not retyped for
+          this page. The console drives it against a seeded billing dataset. No measurement of this
+          system&rsquo;s quality is claimed anywhere in it.{" "}
           <a href="https://github.com/tmaslam/rulegate" target="_blank" rel="noreferrer noopener">
             github.com/tmaslam/rulegate
           </a>
