@@ -45,7 +45,7 @@ export function RulesView() {
         </div>
         <a
           className={styles.repo}
-          href="https://github.com/tmaslam/policy-guard"
+          href="https://github.com/tmaslam/rulegate"
           target="_blank"
           rel="noreferrer noopener"
         >
@@ -202,8 +202,8 @@ export function RulesView() {
         <p>
           Demo build on fixture data — no live billing system is attached, and no measurements of
           this system&rsquo;s quality appear anywhere in it. The rule code above is the real code.{" "}
-          <a href="https://github.com/tmaslam/policy-guard" target="_blank" rel="noreferrer noopener">
-            github.com/tmaslam/policy-guard
+          <a href="https://github.com/tmaslam/rulegate" target="_blank" rel="noreferrer noopener">
+            github.com/tmaslam/rulegate
           </a>
         </p>
       </footer>

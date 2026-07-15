@@ -127,7 +127,7 @@ export function SignInForm() {
         <p>
           Demo build. The console runs on fixture data — no live billing system is attached.{" "}
           <a
-            href="https://github.com/tmaslam/policy-guard"
+            href="https://github.com/tmaslam/rulegate"
             target="_blank"
             rel="noreferrer noopener"
             className={styles.link}

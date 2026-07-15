@@ -1,5 +1,5 @@
 /**
- * Demo fixtures for the PolicyGuard console.
+ * Demo fixtures for the RuleGate console.
  *
  * The shapes here mirror the Python service exactly. `RuleId`, `Effect` and
  * `Severity` are the same string values defined in

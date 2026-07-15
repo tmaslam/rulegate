@@ -3,8 +3,8 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: {
-    default: "PolicyGuard — ops console",
-    template: "%s · PolicyGuard",
+    default: "RuleGate — ops console",
+    template: "%s · RuleGate",
   },
   description:
     "The approval console for an agent that issues refunds, changes plans and cancels subscriptions. Every action it proposes is approved, rejected or escalated by a deterministic policy engine — real code, not a prompt.",

@@ -375,8 +375,8 @@ export function AblationView() {
           <code>src/policy_guarded_ops_agent/policy/</code>; no live billing system is attached and
           no measurement of this system&rsquo;s quality is claimed anywhere in this console.{" "}
           <Link href="/rules">Read the rules</Link> ·{" "}
-          <a href="https://github.com/tmaslam/policy-guard" target="_blank" rel="noreferrer noopener">
-            github.com/tmaslam/policy-guard
+          <a href="https://github.com/tmaslam/rulegate" target="_blank" rel="noreferrer noopener">
+            github.com/tmaslam/rulegate
           </a>
         </p>
       </footer>

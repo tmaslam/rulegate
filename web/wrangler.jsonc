@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "policy-guard",
+  "name": "rulegate",
   "compatibility_date": "2026-07-01",
 
   // Static-assets-only Worker: no `main` script, so Cloudflare serves `out/`
