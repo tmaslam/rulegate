@@ -582,29 +582,7 @@
   text-align: center;
 }
 
-.footer {
-  max-width: 1120px;
-  margin: 0 auto;
-  padding: 2.2rem clamp(1rem, 5vw, 2rem) 4rem;
-  border-top: 1px solid var(--border, rgba(255, 255, 255, 0.07));
-  font-size: 0.82rem;
-  line-height: 1.65;
-  color: var(--text-lo);
-}
 
-.footer p {
-  margin: 0 0 0.6rem;
-  max-width: 78ch;
-}
-
-.footer strong {
-  color: var(--text-mid);
-}
-
-.footNote code {
-  font-family: var(--font-mono);
-  color: var(--text-mid);
-}
 
 @media (prefers-reduced-motion: reduce) {
   .page *,
@@ -627,4 +605,101 @@
   text-align: center;
   max-width: 62ch;
   margin: 0 auto clamp(1.4rem, 3vh, 2rem);
+}
+
+/* ---------------- footer ---------------- */
+
+.footer {
+  border-top: 1px solid var(--border);
+  background: var(--bg-canvas);
+}
+
+.footTop {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: clamp(2.5rem, 6vh, 4rem) clamp(1rem, 5vw, 2rem) clamp(1.5rem, 4vh, 2.5rem);
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) repeat(3, minmax(0, 1fr));
+  gap: clamp(1.5rem, 4vw, 3rem);
+}
+
+@media (max-width: 860px) {
+  .footTop {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .footBrand {
+    grid-column: 1 / -1;
+  }
+}
+
+.footBrand .brand {
+  margin-bottom: 0.75rem;
+}
+
+.footBlurb {
+  margin: 0 0 0.75rem;
+  max-width: 34ch;
+  font-size: var(--t-13);
+  line-height: 1.6;
+  color: var(--text-lo);
+}
+
+.footLicense {
+  font-family: var(--font-mono);
+  font-size: var(--t-11);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-lo);
+}
+
+.footNav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  align-items: flex-start;
+}
+
+.footNav h3 {
+  margin: 0 0 0.2rem;
+  font-size: var(--t-11);
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--text-hi);
+}
+
+.footNav a,
+.footNav span {
+  font-size: var(--t-13);
+  color: var(--text-lo);
+  text-decoration: none;
+  transition: color 140ms var(--ease);
+}
+
+.footNav a:hover {
+  color: var(--accent);
+}
+
+.footBottom {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 1.25rem clamp(1rem, 5vw, 2rem) 3rem;
+  border-top: 1px solid var(--border-subtle);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 2rem;
+}
+
+.footBottom p {
+  margin: 0;
+  font-size: var(--t-12);
+  line-height: 1.6;
+  color: var(--text-lo);
+  max-width: 62ch;
+}
+
+.footBottom code {
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+  color: var(--text-mid);
 }

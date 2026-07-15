@@ -996,7 +996,7 @@ export const ACTIONS: QueueAction[] = [
     valueUsd: 899.0,
     effect: "escalate",
     state: "escalated",
-    reviewedBy: "r.okafor@policyguard.app",
+    reviewedBy: "r.okafor@rulegate.app",
     reviewedAt: "2026-07-13T20:15:02Z",
     reviewNote: "Bumped to billing lead — dispute is open with finance, do not refund until the PO question is settled.",
     evaluated: [
@@ -1018,7 +1018,7 @@ export const ACTIONS: QueueAction[] = [
     valueUsd: 899.0,
     effect: "escalate",
     state: "approved",
-    reviewedBy: "j.almeida@policyguard.app",
+    reviewedBy: "j.almeida@rulegate.app",
     reviewedAt: "2026-07-13T18:39:14Z",
     reviewNote: "Confirmed with the AE on the call. Upgrade is expected and the proration is correct.",
     evaluated: [
@@ -1152,7 +1152,7 @@ export const ACTIONS: QueueAction[] = [
     valueUsd: 899.0,
     effect: "escalate",
     state: "rejected",
-    reviewedBy: "s.varga@policyguard.app",
+    reviewedBy: "s.varga@rulegate.app",
     reviewedAt: "2026-07-13T08:51:37Z",
     reviewNote: "The credit agreed was one week, not the month. Rejecting and reissuing at the correct amount under a new action.",
     evaluated: [

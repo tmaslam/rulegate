@@ -349,15 +349,51 @@ Please follow these rules.
       </section>
 
       <footer className={s.footer}>
-        <p>
-          <strong>RuleGate</strong> — an open-source policy engine for AI operations agents. Python 3.12, LangGraph,
-          Pydantic, FastAPI. Postgres in production, SQLite offline. MIT licensed.
-        </p>
-        <p className={s.footNote}>
-          The console runs on a seeded billing dataset so you can drive it without an account. Figures are published
-          only once a run has produced them — anything unmeasured reads <code>not yet run</code>, never a number that
-          merely sounds good.
-        </p>
+        <div className={s.footTop}>
+          <div className={s.footBrand}>
+            <span className={s.brand}>
+              <Logo size={20} />
+              RuleGate
+            </span>
+            <p className={s.footBlurb}>
+              A policy engine for AI operations agents. The model proposes; deterministic code decides.
+            </p>
+            <span className={s.footLicense}>MIT licensed · Open source</span>
+          </div>
+
+          <nav className={s.footNav} aria-label="Product">
+            <h3>Product</h3>
+            <Link href="/queue">Approval queue</Link>
+            <Link href="/rules">Policy rules</Link>
+            <Link href="/audit">Audit trail</Link>
+            <Link href="/ablation">Ablation</Link>
+          </nav>
+
+          <nav className={s.footNav} aria-label="Built with">
+            <h3>Built with</h3>
+            <span>Python 3.12 · LangGraph</span>
+            <span>Pydantic · FastAPI</span>
+            <span>Postgres · SQLite</span>
+            <span>LiteLLM · Langfuse</span>
+          </nav>
+
+          <nav className={s.footNav} aria-label="Source">
+            <h3>Source</h3>
+            <a href="https://github.com/tmaslam/rulegate">GitHub repository</a>
+            <a href="https://github.com/tmaslam/rulegate/blob/main/SECURITY.md">Security · OWASP LLM</a>
+            <a href="https://github.com/tmaslam/rulegate/blob/main/README.md">Documentation</a>
+            <Link href="/login">Open the console</Link>
+          </nav>
+        </div>
+
+        <div className={s.footBottom}>
+          <p>
+            The console runs on a seeded billing dataset, so you can drive it end to end without an account.
+          </p>
+          <p>
+            Figures are published only once a run has produced them — anything unmeasured reads <code>not yet run</code>.
+          </p>
+        </div>
       </footer>
     </main>
   );

@@ -15,12 +15,12 @@ import styles from "./theme.module.css";
 
 type Theme = "dark" | "light";
 
-const KEY = "policyguard.theme";
+const KEY = "rulegate.theme";
 
 function systemTheme(): Theme {
-  return typeof window !== "undefined" && window.matchMedia("(prefers-color-scheme: light)").matches
-    ? "light"
-    : "dark";
+  return typeof window !== "undefined" && window.matchMedia("(prefers-color-scheme: dark)").matches
+    ? "dark"
+    : "light";
 }
 
 export function ThemeToggle({ compact = false }: { compact?: boolean }) {
@@ -51,7 +51,7 @@ export function ThemeToggle({ compact = false }: { compact?: boolean }) {
     }
   };
 
-  const isDark = theme !== "light";
+  const isDark = theme === "dark";
   const label = `Switch to ${isDark ? "light" : "dark"} theme`;
 
   return (
@@ -62,7 +62,7 @@ export function ThemeToggle({ compact = false }: { compact?: boolean }) {
       aria-label={label}
       title={label}
     >
-      <span className={styles.icons} data-theme-state={theme ?? "dark"}>
+      <span className={styles.icons} data-theme-state={theme ?? "light"}>
         <IconSun size={compact ? 14 : 15} />
         <IconMoon size={compact ? 14 : 15} />
       </span>

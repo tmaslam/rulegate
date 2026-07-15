@@ -23,7 +23,7 @@ export const viewport: Viewport = {
  * ahead of the bundle, and an ops console that strobes white at 3am is a bug
  * worth this much inline script.
  */
-const THEME_SCRIPT = `(function(){try{var t=localStorage.getItem('policyguard.theme');if(t==='light'||t==='dark'){document.documentElement.dataset.theme=t;}}catch(e){}})();`;
+const THEME_SCRIPT = `(function(){try{var t=localStorage.getItem('rulegate.theme');if(t==='light'||t==='dark'){document.documentElement.dataset.theme=t;}}catch(e){}})();`;
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (

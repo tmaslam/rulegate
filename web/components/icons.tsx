@@ -191,18 +191,26 @@ export const IconCommand = ({ size = 12, className }: P) => (
   </svg>
 );
 
-/** The PolicyGuard mark: a shield split by a hard vertical rule. The rule is
- *  the point — the shield is only a shield because something deterministic
- *  divides what passes from what does not. */
+/** The RuleGate mark.
+ *
+ *  A horizontal line is a *rule*, so the three bars are the rules; the split
+ *  vertical bar is the *gate*. One rule clears the gap and gets through, two
+ *  stop dead at it — which is what the product does.
+ *
+ *  This was a shield, which said nothing the name did not already say, and it
+ *  did not match the mark on the landing page. Same geometry as
+ *  components/landing/Logo.tsx and app/icon.svg — change all three together.
+ *  Drawn in currentColor with no badge, so the rail can tint it. */
 export const Mark = ({ size = 22, className }: P) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden focusable={false} className={className}>
-    <path
-      d="M12 2.2 3.6 5.1v6.6c0 4.9 3.4 8.5 8.4 10.1 5-1.6 8.4-5.2 8.4-10.1V5.1z"
-      stroke="currentColor"
-      strokeWidth="1.6"
-      strokeLinejoin="round"
-    />
-    <path d="M12 2.2v19.6" stroke="currentColor" strokeWidth="1.6" />
-    <path d="M12 5.9 6.6 7.7v4c0 2.9 2.1 5.1 5.4 6.2z" fill="currentColor" opacity="0.9" />
+  <svg width={size} height={size} viewBox="0 0 32 32" fill="none" aria-hidden focusable={false} className={className}>
+    {/* denied — stops short of the gate */}
+    <rect x="4" y="8" width="10" height="3" rx="1.5" fill="currentColor" opacity="0.45" />
+    {/* allowed — the only one through the gap */}
+    <rect x="4" y="14.5" width="21" height="3" rx="1.5" fill="currentColor" />
+    {/* denied */}
+    <rect x="4" y="21" width="10" height="3" rx="1.5" fill="currentColor" opacity="0.45" />
+    {/* the gate — split, so the allowed rule passes through rather than over */}
+    <rect x="17" y="4" width="3.5" height="8.5" rx="1.75" fill="currentColor" />
+    <rect x="17" y="19.5" width="3.5" height="8.5" rx="1.75" fill="currentColor" />
   </svg>
 );

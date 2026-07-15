@@ -8,7 +8,7 @@
  * auth implementation; the real service puts the console behind its own SSO.
  */
 
-const KEY = "policyguard.session";
+const KEY = "rulegate.session";
 
 export type Session = {
   email: string;
@@ -17,7 +17,7 @@ export type Session = {
   since: number;
 };
 
-export const DEMO_EMAIL = "demo@policyguard.app";
+export const DEMO_EMAIL = "demo@rulegate.app";
 export const DEMO_PASSWORD = "demo1234";
 
 /** Turn an email into a plausible operator identity for the header. */

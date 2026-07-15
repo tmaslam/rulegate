@@ -98,7 +98,7 @@ export function RejectionHero() {
           <Mark size={26} />
         </span>
         <span className={styles.brandText}>
-          <strong>PolicyGuard</strong>
+          <strong>RuleGate</strong>
           <span>ops console</span>
         </span>
       </header>

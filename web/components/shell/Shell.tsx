@@ -99,7 +99,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
       <div className={styles.shell}>
         {/* ── rail ───────────────────────────────────────────────────── */}
         <nav className={styles.rail} aria-label="Console sections">
-          <Link href="/queue" className={styles.railMark} aria-label="PolicyGuard home">
+          <Link href="/queue" className={styles.railMark} aria-label="RuleGate home">
             <Mark size={22} />
           </Link>
 
