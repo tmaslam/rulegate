@@ -8,7 +8,6 @@
   border: 1px solid var(--border);
   background: var(--bg-surface);
   color: var(--text-mid);
-  overflow: hidden;
   transition: color 0.13s var(--ease), border-color 0.13s var(--ease), background 0.13s var(--ease);
 }
 
@@ -23,6 +22,17 @@
   height: 26px;
 }
 
+.clip {
+  display: block;
+  height: 15px;
+  overflow: hidden;
+  flex: none;
+}
+
+.compact .clip {
+  height: 14px;
+}
+
 /* Two glyphs stacked in one 15px window; the stack slides. Cheaper and
    steadier than cross-fading two absolutely-positioned icons. */
 .icons {
@@ -33,15 +43,21 @@
   transition: transform 0.26s var(--ease-out);
 }
 
-.icons[data-theme-state="dark"] {
+/* Which glyph shows: the reference names the theme you are IN, not the one the
+   click would take you to. Sun is first in the stack, so light sits at 0. */
+.icons[data-theme-state="light"] {
   transform: translateY(0);
 }
 
-.icons[data-theme-state="light"] {
+.icons[data-theme-state="dark"] {
   transform: translateY(-21px);
 }
 
-.compact .icons[data-theme-state="light"] {
+.compact .icons[data-theme-state="dark"] {
+  transform: translateY(-20px);
+}
+
+.compact .icons[data-theme-state="dark"] {
   transform: translateY(-20px);
 }
 

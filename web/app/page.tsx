@@ -23,12 +23,10 @@ import s from "./landing.module.css";
  * fires stays invisible forever. There is a safety sweep below as well.
  */
 
+/** A typographic tick, not a drawn one — it sits on the text baseline and takes
+ *  the run's colour and weight, which is what the reference does. */
 function Check() {
-  return (
-    <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" fill="none">
-      <path d="M3.5 8.5l3 3 6-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
+  return <span aria-hidden="true">✓</span>;
 }
 
 function Arrow() {

@@ -203,14 +203,19 @@ export const IconCommand = ({ size = 12, className }: P) => (
  *  Drawn in currentColor with no badge, so the rail can tint it. */
 export const Mark = ({ size = 22, className }: P) => (
   <svg width={size} height={size} viewBox="0 0 32 32" fill="none" aria-hidden focusable={false} className={className}>
+    {/* Geometry is identical to components/landing/Logo.tsx and app/icon.svg —
+        it had drifted to its own coordinates, so the same product wore two
+        slightly different marks depending on which page you were on. The only
+        difference here is the badge: the rail tints the glyph itself, so this
+        one draws in currentColor with no square behind it. */}
     {/* denied — stops short of the gate */}
-    <rect x="4" y="8" width="10" height="3" rx="1.5" fill="currentColor" opacity="0.45" />
+    <rect x="6" y="8" width="10" height="3" rx="1.5" fill="currentColor" opacity="0.45" />
     {/* allowed — the only one through the gap */}
-    <rect x="4" y="14.5" width="21" height="3" rx="1.5" fill="currentColor" />
+    <rect x="6" y="14.5" width="20" height="3" rx="1.5" fill="currentColor" />
     {/* denied */}
-    <rect x="4" y="21" width="10" height="3" rx="1.5" fill="currentColor" opacity="0.45" />
+    <rect x="6" y="21" width="10" height="3" rx="1.5" fill="currentColor" opacity="0.45" />
     {/* the gate — split, so the allowed rule passes through rather than over */}
-    <rect x="17" y="4" width="3.5" height="8.5" rx="1.75" fill="currentColor" />
-    <rect x="17" y="19.5" width="3.5" height="8.5" rx="1.75" fill="currentColor" />
+    <rect x="18.5" y="5" width="3.5" height="8" rx="1.75" fill="currentColor" />
+    <rect x="18.5" y="19" width="3.5" height="8" rx="1.75" fill="currentColor" />
   </svg>
 );

@@ -62,9 +62,17 @@ export function ThemeToggle({ compact = false, withLabel = false }: { compact?: 
       aria-label={label}
       title={label}
     >
-      <span className={styles.icons} data-theme-state={theme ?? "light"}>
-        <IconSun size={compact ? 14 : 15} />
-        <IconMoon size={compact ? 14 : 15} />
+      {/* The clip has to live here, not on the button. The button carried
+          overflow:hidden and worked while it was a fixed 28x28 square, but
+          overflow clips at the PADDING box — so once the labelled variant grew to
+          31px tall with 8px padding, 31px of the 36px stack showed and both the
+          sun and the moon were visible at once. This window is exactly one glyph
+          tall regardless of what the button around it does. */}
+      <span className={styles.clip}>
+        <span className={styles.icons} data-theme-state={theme ?? "light"}>
+          <IconSun size={compact ? 14 : 15} />
+          <IconMoon size={compact ? 14 : 15} />
+        </span>
       </span>
       {/* The console's rail is icon-only — there is no room and the affordance is
           already learned. On the landing page a visitor sees it once, so it says

@@ -242,11 +242,12 @@
 .trust li {
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: 0.35rem;
 }
 
-.trust svg {
-  color: var(--text-lo);
+/* The tick is a glyph on the baseline, so it just inherits the run. */
+.trust li > span[aria-hidden] {
+  color: inherit;
 }
 
 /* ---------------- sections ---------------- */
