@@ -1,14 +1,22 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="RuleGate">
-  <!-- The mark is the product: a request arrives, the gate stops it.
-       Only two shapes, so it still reads at 16px in a browser tab.
+  <!-- Both halves of the name in one glyph: a horizontal line is a *rule*, the
+       split vertical bar is the *gate*. One rule clears the gap, two stop at it —
+       which is what the product does.
 
-       Values are hard-coded because a favicon has no CSS to inherit. They must
-       track --accent-solid (#2563eb) and --accent-fg (#fff) in globals.css;
-       white on blue-600 is 5.17:1. The in-app mark (components/landing/Logo.tsx)
-       reads the tokens instead, so change both together. -->
+       Same geometry as components/landing/Logo.tsx; change both together. The
+       denied rules keep their 0.5 opacity here rather than being dropped, because
+       without them the mark is just an equals sign and a colon.
+
+       Colours are hard-coded because a favicon has no CSS to inherit. They track
+       --accent-solid (#2563eb) and --accent-fg (#fff). -->
   <rect width="32" height="32" rx="7.5" fill="#2563eb"/>
-  <!-- the request, halted -->
-  <circle cx="10.5" cy="16" r="3.25" fill="#ffffff"/>
-  <!-- the gate -->
-  <rect x="18" y="6.5" width="4.5" height="19" rx="2.25" fill="#ffffff"/>
+  <!-- denied -->
+  <rect x="6" y="8" width="10" height="3" rx="1.5" fill="#ffffff" opacity="0.5"/>
+  <!-- allowed — through the gap -->
+  <rect x="6" y="14.5" width="20" height="3" rx="1.5" fill="#ffffff"/>
+  <!-- denied -->
+  <rect x="6" y="21" width="10" height="3" rx="1.5" fill="#ffffff" opacity="0.5"/>
+  <!-- the gate, split -->
+  <rect x="18.5" y="5" width="3.5" height="8" rx="1.75" fill="#ffffff"/>
+  <rect x="18.5" y="19" width="3.5" height="8" rx="1.75" fill="#ffffff"/>
 </svg>

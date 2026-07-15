@@ -1,13 +1,15 @@
 /**
  * The RuleGate mark.
  *
- * A request (the dot) meets the gate (the bar) and stops. That is the entire
- * product, and it is the whole reason the mark is only two shapes — it has to
- * survive being rendered at 16px in a browser tab.
+ * Both halves of the name, in one glyph. A horizontal line is called a *rule*,
+ * so the three bars are the rules; the split vertical bar is the *gate*. One
+ * rule clears the gap and gets through, two stop dead at it — which is also
+ * exactly what the product does.
  *
- * Colours come from currentColor and the accent token rather than being baked
- * in, so the mark follows the theme. The static icon.svg/apple-icon.svg files
- * carry hard-coded values instead, since a favicon has no CSS to inherit.
+ * Four shapes, all axis-aligned, nothing thinner than ~3/32 of the box, so it
+ * still resolves when rasterised small. `app/icon.svg` carries the same geometry
+ * with hard-coded colours (a favicon has no CSS to inherit) — change both
+ * together.
  */
 export default function Logo({ size = 20 }: { size?: number }) {
   return (
@@ -20,8 +22,19 @@ export default function Logo({ size = 20 }: { size?: number }) {
       style={{ display: "block", flex: "none" }}
     >
       <rect width="32" height="32" rx="7.5" fill="var(--accent-solid)" />
-      <circle cx="10.5" cy="16" r="3.25" fill="var(--accent-fg)" />
-      <rect x="18" y="6.5" width="4.5" height="19" rx="2.25" fill="var(--accent-fg)" />
+
+      {/* denied — stops short of the gate */}
+      <rect x="6" y="8" width="10" height="3" rx="1.5" fill="var(--accent-fg)" opacity="0.5" />
+
+      {/* allowed — the only one through the gap */}
+      <rect x="6" y="14.5" width="20" height="3" rx="1.5" fill="var(--accent-fg)" />
+
+      {/* denied */}
+      <rect x="6" y="21" width="10" height="3" rx="1.5" fill="var(--accent-fg)" opacity="0.5" />
+
+      {/* the gate — split, so the allowed rule passes through rather than over */}
+      <rect x="18.5" y="5" width="3.5" height="8" rx="1.75" fill="var(--accent-fg)" />
+      <rect x="18.5" y="19" width="3.5" height="8" rx="1.75" fill="var(--accent-fg)" />
     </svg>
   );
 }
