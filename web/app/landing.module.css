@@ -26,23 +26,20 @@
    lets the hero's bloom run behind and past it. */
 .nav {
   position: sticky;
-  top: clamp(0.5rem, 1.5vw, 0.9rem);
+  top: 0;
   z-index: 20;
   max-width: var(--shell);
-  margin: clamp(0.5rem, 1.5vw, 0.9rem) auto 0;
-  margin-left: max(var(--gutter), calc(50vw - var(--shell) / 2));
-  margin-right: max(var(--gutter), calc(50vw - var(--shell) / 2));
+  margin: 0 auto;
+  margin-left: max(0px, calc(50vw - var(--shell) / 2));
+  margin-right: max(0px, calc(50vw - var(--shell) / 2));
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  padding: 0.6rem 0.7rem 0.6rem 1rem;
-  border-radius: 14px;
-  background: color-mix(in srgb, var(--bg-surface) 88%, transparent);
-  -webkit-backdrop-filter: blur(14px) saturate(1.4);
-  backdrop-filter: blur(14px) saturate(1.4);
-  border: 1px solid var(--border);
-  box-shadow: var(--shadow-2);
+  height: 62px;
+  padding: 14px 24px;
+  border-radius: 0 0 14px 14px;
+  background: var(--bg-surface);
 }
 
 .brand {
@@ -66,12 +63,13 @@
 .navLinks {
   display: flex;
   align-items: center;
-  gap: clamp(0.75rem, 2vw, 1.6rem);
-  font-size: 0.85rem;
+  gap: 24px;
+  font-size: 14px;
 }
 
 .navLinks a {
-  color: var(--text-lo);
+  color: var(--text-mid);
+  font-weight: 500;
   text-decoration: none;
   transition: color 140ms ease;
 }
@@ -91,11 +89,12 @@
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
-  padding: 0.44rem 0.8rem;
-  border-radius: 7px;
-  border: 1px solid var(--accent-edge);
+  padding: 10px 13px;
+  border-radius: 10px;
+  border: none;
   color: var(--accent) !important;
-  background: var(--accent-wash);
+  background: rgba(59, 130, 246, 0.12);
+  font-weight: 500;
 }
 
 .navCta:hover {
@@ -133,16 +132,15 @@
 .eyebrow {
   position: relative;
   display: inline-block;
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  letter-spacing: 0.16em;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--accent);
-  margin: 0 0 1.4rem;
-  padding: 0.3rem 0.7rem;
-  border: 1px solid var(--accent-edge);
+  margin: 0 0 24px;
+  padding: 8px 14px;
   border-radius: 999px;
-  background: var(--accent-wash);
+  background: rgba(59, 130, 246, 0.12);
 }
 
 /* Not a flex column: the accent has to start mid-line, the way it reads aloud —
@@ -266,22 +264,19 @@
 
 .pill {
   display: inline-block;
-  font-family: var(--font-mono);
-  font-size: 0.68rem;
-  letter-spacing: 0.14em;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--text-lo);
-  border: 1px solid var(--border, rgba(255, 255, 255, 0.12));
-  border-radius: 999px;
-  padding: 0.25rem 0.65rem;
-  margin-bottom: 1rem;
+  color: var(--accent);
+  margin-bottom: 12px;
 }
 
 .h2 {
   margin: 0 0 0.9rem;
   font-size: clamp(26px, 3.6vw, 40px);
   line-height: 1.15;
-  letter-spacing: -0.025em;
+  letter-spacing: -0.03em;
   font-weight: 700;
   color: var(--text-hi);
 }

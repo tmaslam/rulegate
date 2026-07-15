@@ -70,3 +70,24 @@
 .labelled:hover .labelText {
   color: var(--text-hi);
 }
+
+/* Landing nav: the same tinted chip as the CTA beside it. Measured off the
+   reference — tint rgba(59,130,246,.12), radius 10, pad 8/10, no border. It was
+   a white outlined control, which read as a different family entirely. */
+.labelled {
+  height: 31px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: none;
+  background: rgba(59, 130, 246, 0.12);
+}
+
+.labelled .labelText {
+  font-size: 12px;
+  color: var(--accent);
+  font-weight: 500;
+}
+
+.labelled:hover {
+  background: rgba(59, 130, 246, 0.2);
+}
