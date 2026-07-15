@@ -19,7 +19,7 @@ export default function Logo({ size = 20 }: { size?: number }) {
       aria-label="RuleGate"
       style={{ display: "block", flex: "none" }}
     >
-      <rect width="32" height="32" rx="7.5" fill="var(--accent)" />
+      <rect width="32" height="32" rx="7.5" fill="var(--accent-solid)" />
       <circle cx="10.5" cy="16" r="3.25" fill="var(--accent-fg)" />
       <rect x="18" y="6.5" width="4.5" height="19" rx="2.25" fill="var(--accent-fg)" />
     </svg>

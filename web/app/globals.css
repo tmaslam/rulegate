@@ -6,13 +6,15 @@
    design, light is the alternate. Built for someone who keeps this open for
    eight hours and reads it at 2am, not for someone scrolling a landing page.
 
-   Chassis is WARM CARBON (hue ~50, sat ~6%) rather than the cool slate every
-   other dashboard reaches for. Under a warm neutral the signal hues read as
-   deliberately placed instrumentation rather than decoration.
+   Chassis is COOL NAVY and the accent is BLUE — the two have to agree, or the
+   accent reads as an accident.
 
-   Accent is ACID LIME — the brand/interactive colour, and it is rationed.
-   Focus rings, the active nav rail, one primary button per screen, the mark.
-   Nothing else. If lime is on screen twice, one of them is a bug.
+   The accent is rationed: focus rings, the active nav rail, one primary button
+   per screen, the mark. Nothing else.
+
+   Two accent rungs, and they are NOT interchangeable:
+     --accent       blue-500  readable as TEXT on dark  (white on it fails)
+     --accent-solid blue-600  button fill, white on it  (fails as text on dark)
 
    Semantic hues carry policy outcomes only:
      mint  = allow      amber = escalate     rose = deny      cyan = tool I/O
@@ -25,30 +27,37 @@
 
 /* ---- LAYER 1: raw ramps. Theme-independent. Components never touch these. -- */
 :root {
-  /* Warm carbon */
-  --c-950: #0a0a08;
-  --c-900: #100f0d;
-  --c-850: #161614;
-  --c-800: #1d1d1a;
-  --c-750: #242421;
-  --c-700: #2c2c27;
-  --c-600: #3a3a33;
-  --c-500: #6b6b61;
-  --c-400: #948f84;
-  --c-300: #b0ada2;
-  --c-200: #d2cfc4;
-  --c-100: #e6e4da;
-  --c-50: #f2f1ea;
-  --c-25: #f8f7f2;
-  --c-0: #fffffb;
+  /* Cool navy. The accent is blue, and blue on a warm-neutral chassis reads as
+     an accident rather than a decision — the whole surface has to agree with it. */
+  --c-950: #080c15;
+  --c-900: #0d1220;
+  --c-850: #131a29;
+  --c-800: #1a2233;
+  --c-750: #212a3d;
+  --c-700: #2a3448;
+  --c-600: #3a4661;
+  --c-500: #64748b;
+  --c-400: #94a3b8;
+  --c-300: #b6c2d1;
+  --c-200: #d5dde7;
+  --c-100: #e7edf4;
+  --c-50: #f1f5f9;
+  --c-25: #f8fafc;
+  --c-0: #ffffff;
 
-  /* Acid lime — the accent */
-  --lime-300: #d8f77e;
-  --lime-400: #c8f24e;
-  --lime-500: #a9d431;
-  --lime-600: #7d9e1c;
-  --lime-700: #5a7508;
-  --lime-800: #44590a;
+  /* Blue — the accent.
+     Two rungs do two different jobs, and neither can do both. Measured against
+     the dark canvas (#0e1218) and against white:
+       blue-500 as TEXT on dark ....... 5.11:1  PASS   (white on it: 3.68  FAIL)
+       blue-600 as BUTTON BG w/ white .. 5.17:1 PASS   (as text on dark: 3.63 FAIL)
+     So --accent is the readable-on-dark rung and --accent-solid is the fill.
+     Never swap them. */
+  --blue-300: #93c5fd;
+  --blue-400: #60a5fa;
+  --blue-500: #3b82f6;
+  --blue-600: #2563eb;
+  --blue-700: #1d4ed8;
+  --blue-800: #1e40af;
 
   /* Signal hues */
   --mint-400: #3ddba0;
@@ -112,7 +121,7 @@
   --bg-surface: var(--c-850);
   --bg-raised: var(--c-800);
   --bg-hover: var(--c-750);
-  --bg-inset: #0c0c0a;
+  --bg-inset: #060911;
 
   --text-hi: var(--c-50);
   --text-mid: var(--c-300);
@@ -120,14 +129,15 @@
   --text-inverse: var(--c-950);
 
   --border: var(--c-700);
-  --border-subtle: #201f1c;
+  --border-subtle: #1a2130;
   --border-strong: var(--c-500);
 
-  --accent: var(--lime-400);
-  --accent-quiet: var(--lime-500);
-  --accent-fg: var(--c-950);
-  --accent-wash: rgba(200, 242, 78, 0.1);
-  --accent-edge: rgba(200, 242, 78, 0.32);
+  --accent: var(--blue-500);        /* text/icons on dark — 5.11:1 */
+  --accent-solid: var(--blue-600);  /* button fill — white on it, 5.17:1 */
+  --accent-quiet: var(--blue-700);  /* solid hover */
+  --accent-fg: #ffffff;             /* on --accent-solid, never on --accent */
+  --accent-wash: rgba(59, 130, 246, 0.12);
+  --accent-edge: rgba(59, 130, 246, 0.34);
 
   --allow: var(--mint-400);
   --allow-wash: rgba(61, 219, 160, 0.11);
@@ -151,7 +161,7 @@
   --grid-line: rgba(255, 255, 255, 0.026);
 }
 
-/* ---- LIGHT — the alternate. Warm paper, not white. ---------------------- */
+/* ---- LIGHT — the alternate. Cool paper. ---------------------------------- */
 @media (prefers-color-scheme: light) {
   :root:not([data-theme="dark"]) {
     color-scheme: light;
@@ -160,23 +170,24 @@
     --bg-canvas: var(--c-25);
     --bg-surface: var(--c-0);
     --bg-raised: #ffffff;
-    --bg-hover: #f0efe8;
-    --bg-inset: #f4f3ec;
+    --bg-hover: #eef2f7;
+    --bg-inset: #f1f5f9;
 
-    --text-hi: #17170f;
-    --text-mid: #57564c;
-    --text-lo: #6e6d62;
+    --text-hi: #0f172a;
+    --text-mid: #475569;
+    --text-lo: #606f83;
     --text-inverse: var(--c-0);
 
-    --border: #e0dfd4;
-    --border-subtle: #ebeae0;
-    --border-strong: #8d8c80;
+    --border: #dbe2ea;
+    --border-subtle: #e8edf3;
+    --border-strong: #7d8b9c;
 
-    --accent: var(--lime-700);
-    --accent-quiet: var(--lime-800);
-    --accent-fg: var(--c-0);
-    --accent-wash: rgba(90, 117, 8, 0.09);
-    --accent-edge: rgba(90, 117, 8, 0.3);
+    --accent: var(--blue-600);        /* text on white — 5.17:1 */
+    --accent-solid: var(--blue-600);
+    --accent-quiet: var(--blue-700);
+    --accent-fg: #ffffff;
+    --accent-wash: rgba(37, 99, 235, 0.08);
+    --accent-edge: rgba(37, 99, 235, 0.28);
 
     --allow: var(--mint-700);
     --allow-wash: rgba(13, 122, 82, 0.08);
@@ -194,10 +205,10 @@
     --tool-wash: rgba(17, 110, 140, 0.07);
     --tool-edge: rgba(17, 110, 140, 0.26);
 
-    --shadow-1: 0 1px 2px rgba(40, 38, 26, 0.08);
-    --shadow-2: 0 4px 14px rgba(40, 38, 26, 0.1);
-    --shadow-3: 0 18px 50px rgba(40, 38, 26, 0.16);
-    --grid-line: rgba(23, 23, 15, 0.032);
+    --shadow-1: 0 1px 2px rgba(15, 23, 42, 0.08);
+    --shadow-2: 0 4px 14px rgba(15, 23, 42, 0.1);
+    --shadow-3: 0 18px 50px rgba(15, 23, 42, 0.16);
+    --grid-line: rgba(15, 23, 42, 0.032);
   }
 }
 
@@ -209,23 +220,24 @@
   --bg-canvas: var(--c-25);
   --bg-surface: var(--c-0);
   --bg-raised: #ffffff;
-  --bg-hover: #f0efe8;
-  --bg-inset: #f4f3ec;
+  --bg-hover: #eef2f7;
+  --bg-inset: #f1f5f9;
 
-  --text-hi: #17170f;
-  --text-mid: #57564c;
-  --text-lo: #6e6d62;
+  --text-hi: #0f172a;
+  --text-mid: #475569;
+  --text-lo: #606f83;
   --text-inverse: var(--c-0);
 
-  --border: #e0dfd4;
-  --border-subtle: #ebeae0;
-  --border-strong: #8d8c80;
+  --border: #dbe2ea;
+  --border-subtle: #e8edf3;
+  --border-strong: #7d8b9c;
 
-  --accent: var(--lime-700);
-  --accent-quiet: var(--lime-800);
-  --accent-fg: var(--c-0);
-  --accent-wash: rgba(90, 117, 8, 0.09);
-  --accent-edge: rgba(90, 117, 8, 0.3);
+  --accent: var(--blue-600);        /* text on white — 5.17:1 */
+  --accent-solid: var(--blue-600);
+  --accent-quiet: var(--blue-700);
+  --accent-fg: #ffffff;
+  --accent-wash: rgba(37, 99, 235, 0.08);
+  --accent-edge: rgba(37, 99, 235, 0.28);
 
   --allow: var(--mint-700);
   --allow-wash: rgba(13, 122, 82, 0.08);
@@ -243,10 +255,10 @@
   --tool-wash: rgba(17, 110, 140, 0.07);
   --tool-edge: rgba(17, 110, 140, 0.26);
 
-  --shadow-1: 0 1px 2px rgba(40, 38, 26, 0.08);
-  --shadow-2: 0 4px 14px rgba(40, 38, 26, 0.1);
-  --shadow-3: 0 18px 50px rgba(40, 38, 26, 0.16);
-  --grid-line: rgba(23, 23, 15, 0.032);
+  --shadow-1: 0 1px 2px rgba(15, 23, 42, 0.08);
+  --shadow-2: 0 4px 14px rgba(15, 23, 42, 0.1);
+  --shadow-3: 0 18px 50px rgba(15, 23, 42, 0.16);
+  --grid-line: rgba(15, 23, 42, 0.032);
 }
 
 /* ---- Reset / base ------------------------------------------------------- */
@@ -370,7 +382,7 @@ svg {
   left: var(--s-5);
   z-index: 200;
   padding: var(--s-4) var(--s-6);
-  background: var(--accent);
+  background: var(--accent-solid);
   color: var(--accent-fg);
   font-size: var(--t-12);
   font-weight: 650;

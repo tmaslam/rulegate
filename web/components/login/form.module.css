@@ -131,7 +131,7 @@
   height: 38px;
   margin-top: var(--s-3);
   border-radius: var(--r-2);
-  background: var(--accent);
+  background: var(--accent-solid);
   color: var(--accent-fg);
   font-size: var(--t-13);
   font-weight: 650;

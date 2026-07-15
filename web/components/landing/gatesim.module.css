@@ -1,4 +1,4 @@
-/* The live gate simulator. Dark surface, lime accent — same language as the console. */
+/* The live gate simulator. Same language as the console. */
 
 .wrap {
   width: 100%;
@@ -249,39 +249,39 @@
 
 /* per-effect colour. Icon + text both carry it, never colour alone. */
 .r_allow.ruleIn {
-  border-color: var(--accent-edge);
-  background: var(--accent-wash);
+  border-color: var(--allow-edge);
+  background: var(--allow-wash);
 }
 .r_allow .ruleIcon {
-  background: var(--accent-wash);
-  color: var(--accent);
+  background: var(--allow-wash);
+  color: var(--allow);
 }
 .r_allow .ruleId {
-  color: var(--accent);
+  color: var(--allow);
 }
 
 .r_deny.ruleIn {
-  border-color: rgba(248, 113, 113, 0.35);
-  background: rgba(248, 113, 113, 0.1);
+  border-color: var(--deny-edge);
+  background: var(--deny-wash);
 }
 .r_deny .ruleIcon {
-  background: rgba(248, 113, 113, 0.16);
-  color: rgb(248, 113, 113);
+  background: var(--deny-wash);
+  color: var(--deny);
 }
 .r_deny .ruleId {
-  color: rgb(248, 113, 113);
+  color: var(--deny);
 }
 
 .r_escalate.ruleIn {
-  border-color: rgba(251, 191, 36, 0.35);
-  background: rgba(251, 191, 36, 0.09);
+  border-color: var(--escalate-edge);
+  background: var(--escalate-wash);
 }
 .r_escalate .ruleIcon {
-  background: rgba(251, 191, 36, 0.16);
-  color: rgb(251, 191, 36);
+  background: var(--escalate-wash);
+  color: var(--escalate);
 }
 .r_escalate .ruleId {
-  color: rgb(251, 191, 36);
+  color: var(--escalate);
 }
 
 /* ---------------- verdict ---------------- */
@@ -334,39 +334,39 @@
 }
 
 .v_deny {
-  border-color: rgba(248, 113, 113, 0.4);
-  background: rgba(248, 113, 113, 0.1);
+  border-color: var(--deny-edge);
+  background: var(--deny-wash);
 }
 .v_deny .verdictIcon {
-  background: rgba(248, 113, 113, 0.18);
-  color: rgb(248, 113, 113);
+  background: var(--deny-wash);
+  color: var(--deny);
 }
 .v_deny .verdictWord {
-  color: rgb(248, 113, 113);
+  color: var(--deny);
 }
 
 .v_escalate {
-  border-color: rgba(251, 191, 36, 0.4);
-  background: rgba(251, 191, 36, 0.09);
+  border-color: var(--escalate-edge);
+  background: var(--escalate-wash);
 }
 .v_escalate .verdictIcon {
-  background: rgba(251, 191, 36, 0.18);
-  color: rgb(251, 191, 36);
+  background: var(--escalate-wash);
+  color: var(--escalate);
 }
 .v_escalate .verdictWord {
-  color: rgb(251, 191, 36);
+  color: var(--escalate);
 }
 
 .v_allow {
-  border-color: var(--accent-edge);
-  background: var(--accent-wash);
+  border-color: var(--allow-edge);
+  background: var(--allow-wash);
 }
 .v_allow .verdictIcon {
-  background: var(--accent-wash);
-  color: var(--accent);
+  background: var(--allow-wash);
+  color: var(--allow);
 }
 .v_allow .verdictWord {
-  color: var(--accent);
+  color: var(--allow);
 }
 
 @media (prefers-reduced-motion: reduce) {

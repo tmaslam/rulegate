@@ -1,5 +1,5 @@
 /* RuleGate landing page.
-   Built on the console's existing tokens (dark base, lime accent) so the page
+   Built on the console's existing tokens (cool navy, blue accent) so the page
    and the product it opens into read as one thing. */
 
 .page {
@@ -96,7 +96,7 @@
   padding: clamp(4rem, 12vh, 8rem) clamp(1rem, 5vw, 2rem) clamp(3.5rem, 8vh, 5.5rem);
 }
 
-/* A single soft lime bloom. Not a gradient soup. */
+/* A single soft blue bloom. Not a gradient soup. */
 .heroGlow {
   position: absolute;
   top: -30%;
@@ -183,7 +183,7 @@
 }
 
 .btnPrimary {
-  background: var(--accent);
+  background: var(--accent-solid);
   color: var(--accent-fg);
   border: 1px solid var(--accent);
 }
@@ -287,7 +287,7 @@
 }
 
 .splitBad {
-  border-color: rgba(248, 113, 113, 0.28);
+  border-color: var(--deny-edge);
 }
 
 .splitGood {
@@ -305,7 +305,7 @@
 }
 
 .splitBad .splitTag {
-  color: rgb(248, 113, 113);
+  color: var(--deny);
 }
 
 .splitGood .splitTag {
@@ -438,15 +438,15 @@
 }
 
 .eff_deny {
-  color: rgb(248, 113, 113);
+  color: var(--deny);
 }
 
 .eff_escalate {
-  color: rgb(251, 191, 36);
+  color: var(--escalate);
 }
 
 .eff_allow {
-  color: var(--accent);
+  color: var(--allow);
 }
 
 @media (max-width: 720px) {
@@ -484,7 +484,7 @@
 }
 
 .proofOff {
-  border-color: rgba(248, 113, 113, 0.3);
+  border-color: var(--deny-edge);
 }
 
 .proofOn {
@@ -503,8 +503,8 @@
 }
 
 .proofOff .proofLabel {
-  color: rgb(248, 113, 113);
-  background: rgba(248, 113, 113, 0.12);
+  color: var(--deny);
+  background: var(--deny-wash);
 }
 
 .proofOn .proofLabel {
