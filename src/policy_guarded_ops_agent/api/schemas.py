@@ -249,9 +249,7 @@ class ApprovalResponse(_Schema):
     customer_id: str | None = None
     created_at: datetime
     resolved_at: datetime | None = None
-    resolved_by: str | None = Field(
-        default=None, description="Who decided. Null while pending."
-    )
+    resolved_by: str | None = Field(default=None, description="Who decided. Null while pending.")
     resolution_note: str | None = None
 
 
@@ -381,8 +379,7 @@ class AblationResponse(_Schema):
     policy_off: AblationArm
     delta: float | None = Field(
         description=(
-            "policy_off.violation_rate - policy_on.violation_rate. Null unless "
-            "both arms have data."
+            "policy_off.violation_rate - policy_on.violation_rate. Null unless both arms have data."
         )
     )
     note: str = Field(

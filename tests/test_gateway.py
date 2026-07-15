@@ -198,7 +198,7 @@ class TestCircuitBreaker:
         breaker.record_failure()
         now[0] = 31.0
         assert breaker.state is CircuitState.HALF_OPEN
-        assert breaker.allow()      # first probe admitted
+        assert breaker.allow()  # first probe admitted
         assert not breaker.allow()  # second is not — only one probe at a time
 
     def test_success_closes_the_circuit(self) -> None:

@@ -138,9 +138,7 @@ def build_graph(deps: AgentDeps) -> StateGraph[AgentState, None, AgentState, Age
     graph.add_node(NODE_RESPOND, nodes.respond)
 
     graph.add_edge(START, NODE_GUARD_INPUT)
-    graph.add_conditional_edges(
-        NODE_GUARD_INPUT, _route_after_guard, [NODE_PROPOSE, NODE_RESPOND]
-    )
+    graph.add_conditional_edges(NODE_GUARD_INPUT, _route_after_guard, [NODE_PROPOSE, NODE_RESPOND])
     graph.add_conditional_edges(NODE_PROPOSE, _route_after_propose, [NODE_DECIDE, END])
     graph.add_conditional_edges(
         NODE_DECIDE,

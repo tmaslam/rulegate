@@ -380,9 +380,7 @@ async def decide_approval(
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(exc)) from exc
 
     config: RunnableConfig = {"configurable": {"thread_id": request.thread_id}}
-    result = await rt.graph.ainvoke(
-        Command(resume=decision.model_dump(mode="json")), config=config
-    )
+    result = await rt.graph.ainvoke(Command(resume=decision.model_dump(mode="json")), config=config)
     return _state_to_run_response(
         result,
         run_id=request.run_id,
@@ -445,7 +443,7 @@ async def audit_by_rule(
     limit: int = Query(default=100, ge=1, le=500),
     rt: AgentRuntime = Depends(get_runtime),
 ) -> AuditTrailResponse:
-    """"Show me every time refund-window-30d refused someone." """
+    """ "Show me every time refund-window-30d refused someone." """
     events = await rt.deps.audit.by_rule(rule_id, limit=limit)
     return AuditTrailResponse(
         events=[AuditEventResponse.from_event(e) for e in events],

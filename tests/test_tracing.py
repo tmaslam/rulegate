@@ -36,8 +36,11 @@ class TestConfig:
 
     def test_otlp_endpoint_is_langfuse_path(self) -> None:
         config = TracingConfig(
-            env={"LANGFUSE_PUBLIC_KEY": "pk", "LANGFUSE_SECRET_KEY": "sk",
-                 "LANGFUSE_HOST": "https://cloud.langfuse.com/"}
+            env={
+                "LANGFUSE_PUBLIC_KEY": "pk",
+                "LANGFUSE_SECRET_KEY": "sk",
+                "LANGFUSE_HOST": "https://cloud.langfuse.com/",
+            }
         )
         assert config.otlp_endpoint == "https://cloud.langfuse.com/api/public/otel/v1/traces"
 

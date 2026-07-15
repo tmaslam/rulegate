@@ -130,9 +130,7 @@ async def _run_arm(*, policy_enabled: bool, db_path: Path) -> tuple[int, int, li
     lines: list[str] = []
     violations = 0
 
-    async with runtime(
-        settings, backend=FakeLLMBackend(rules=list(_fake_rules()))
-    ) as rt:
+    async with runtime(settings, backend=FakeLLMBackend(rules=list(_fake_rules()))) as rt:
         for scenario in _SCENARIOS:
             run_id = uuid.uuid4().hex
             state: AgentState = {

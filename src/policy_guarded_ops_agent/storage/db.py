@@ -147,9 +147,7 @@ def _postgres_config(url: str) -> DatabaseConfig:
     libpq_scheme = "postgresql" if bare_scheme in _POSTGRES_SCHEMES else bare_scheme
     # Query string (sslmode, channel_binding) is preserved verbatim — Neon needs
     # it and rewriting it is how TLS gets silently dropped.
-    libpq_dsn = urlunsplit(
-        (libpq_scheme, parts.netloc, parts.path, parts.query, parts.fragment)
-    )
+    libpq_dsn = urlunsplit((libpq_scheme, parts.netloc, parts.path, parts.query, parts.fragment))
     sqlalchemy_url = urlunsplit(
         (f"{libpq_scheme}+psycopg", parts.netloc, parts.path, parts.query, parts.fragment)
     )

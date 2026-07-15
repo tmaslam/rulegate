@@ -134,7 +134,9 @@ class _Seed:
     """Deterministic seed data, built relative to ``now``."""
 
     @staticmethod
-    def build(now: datetime) -> tuple[
+    def build(
+        now: datetime,
+    ) -> tuple[
         dict[str, Customer],
         dict[str, Subscription],
         dict[str, Charge],
@@ -457,9 +459,7 @@ class MockBillingAPI:
                 msg = f"subscription {subscription_id} is already canceled"
                 raise InvalidBillingOperationError(msg)
 
-            status = (
-                SubscriptionStatus.ACTIVE if at_period_end else SubscriptionStatus.CANCELED
-            )
+            status = SubscriptionStatus.ACTIVE if at_period_end else SubscriptionStatus.CANCELED
             updated = subscription.model_copy(update={"status": status})
             self._subscriptions[subscription_id] = updated
             log.info(
