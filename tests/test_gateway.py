@@ -233,11 +233,24 @@ class TestCircuitBreaker:
 
 
 class TestRateLimiter:
-    async def test_bucket_allows_burst_then_throttles(
-        self, instant_sleep: tuple[list[float], Sleeper]
-    ) -> None:
-        slept, sleeper = instant_sleep
+    async def test_bucket_allows_burst_then_throttles(self) -> None:
+        # This test used the shared `instant_sleep` fixture, which returns
+        # immediately and never touches the clock. Against a frozen clock that is
+        # an infinite loop: acquire() refills (elapsed is always 0, so no tokens
+        # arrive), sleeps for nothing, and checks again — forever. It hung the
+        # suite for 30 minutes in CI.
+        #
+        # A fake sleeper standing in for real time has to advance the fake clock
+        # by the time it claims to have slept, or the code under test can never
+        # make progress. Local to this test, since only the bucket pairs a
+        # sleeper with a clock.
         now = [0.0]
+        slept: list[float] = []
+
+        async def sleeper(delay: float) -> None:
+            slept.append(delay)
+            now[0] += delay  # the whole point: time actually passes
+
         bucket = TokenBucket(rate_per_minute=60, burst=2, clock=lambda: now[0], sleeper=sleeper)
         assert await bucket.acquire() == 0.0
         assert await bucket.acquire() == 0.0
@@ -245,6 +258,7 @@ class TestRateLimiter:
         waited = await bucket.acquire()
         assert waited > 0.0
         assert slept
+        assert now[0] == pytest.approx(waited)  # it waited exactly as long as it says
 
     def test_rejects_nonsense_rate(self) -> None:
         with pytest.raises(ValueError, match="positive"):
