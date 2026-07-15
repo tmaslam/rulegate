@@ -614,3 +614,17 @@
     animation-duration: 0.01ms !important;
   }
 }
+
+/* ---------------- live sim section ---------------- */
+
+.simSection {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 clamp(1rem, 5vw, 2rem) clamp(3rem, 8vh, 5rem);
+}
+
+.simHead {
+  text-align: center;
+  max-width: 62ch;
+  margin: 0 auto clamp(1.4rem, 3vh, 2rem);
+}

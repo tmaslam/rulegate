@@ -1,0 +1,387 @@
+/* The live gate simulator. Dark surface, lime accent — same language as the console. */
+
+.wrap {
+  width: 100%;
+  max-width: 780px;
+  margin: 0 auto;
+  text-align: left;
+}
+
+/* ---------------- scenario chips ---------------- */
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 0.9rem;
+  justify-content: center;
+}
+
+.chip,
+.replay {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.02em;
+  padding: 0.36rem 0.72rem;
+  border-radius: 999px;
+  border: 1px solid var(--border, rgba(255, 255, 255, 0.14));
+  background: transparent;
+  color: var(--text-lo);
+  cursor: pointer;
+  transition: color 140ms ease, border-color 140ms ease, background 140ms ease;
+}
+
+.chip:hover,
+.replay:hover {
+  color: var(--text-hi);
+  border-color: var(--text-lo);
+}
+
+.chip:focus-visible,
+.replay:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.chipOn {
+  color: var(--accent);
+  border-color: var(--accent-edge);
+  background: var(--accent-wash);
+}
+
+.replay {
+  margin-left: auto;
+  opacity: 0.7;
+}
+
+@media (max-width: 560px) {
+  .replay {
+    margin-left: 0;
+  }
+}
+
+/* ---------------- board ---------------- */
+
+.board {
+  border: 1px solid var(--border, rgba(255, 255, 255, 0.1));
+  border-radius: 16px;
+  background: var(--bg-surface);
+  padding: clamp(0.9rem, 2.5vw, 1.4rem);
+  box-shadow: 0 24px 60px -24px rgba(0, 0, 0, 0.7);
+}
+
+.lane {
+  border-radius: 11px;
+  padding: 0.85rem 0.95rem;
+  background: var(--bg-inset);
+  border: 1px solid var(--border, rgba(255, 255, 255, 0.07));
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 380ms ease, transform 380ms ease;
+}
+
+.lane.in {
+  opacity: 1;
+  transform: none;
+}
+
+/* Never fully hide — a stalled animation must not blank the section. */
+.lane.out {
+  opacity: 0.28;
+}
+
+.laneTag {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-lo);
+  margin-bottom: 0.5rem;
+}
+
+.request {
+  margin: 0;
+  font-size: 0.86rem;
+  line-height: 1.6;
+  color: var(--text-mid);
+  max-height: 6.5em;
+  overflow-y: auto;
+}
+
+/* ---------------- connector ---------------- */
+
+.flow {
+  height: 26px;
+  display: grid;
+  place-items: center;
+  position: relative;
+}
+
+.flow::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: 1px;
+  margin: 0 auto;
+  background: var(--border, rgba(255, 255, 255, 0.12));
+}
+
+.flowDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--border, rgba(255, 255, 255, 0.2));
+  position: relative;
+  transition: background 260ms ease, box-shadow 260ms ease;
+}
+
+.flowOn {
+  background: var(--accent);
+  box-shadow: 0 0 0 4px var(--accent-wash);
+}
+
+/* ---------------- model lane ---------------- */
+
+.modelLane {
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.tool {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  line-height: 1.6;
+  color: var(--text-hi);
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 6px;
+  padding: 0.5rem 0.6rem;
+  margin-bottom: 0.6rem;
+  overflow-x: auto;
+  white-space: pre;
+}
+
+.reasoning {
+  margin: 0 0 0.5rem;
+  font-size: 0.82rem;
+  font-style: italic;
+  line-height: 1.55;
+  color: var(--text-lo);
+}
+
+.noAuthority {
+  display: block;
+  font-size: 0.7rem;
+  color: var(--text-lo);
+  opacity: 0.75;
+  border-left: 2px solid var(--accent-edge);
+  padding-left: 0.5rem;
+}
+
+/* ---------------- the gate ---------------- */
+
+.gate {
+  border-color: var(--accent-edge);
+  background: linear-gradient(180deg, var(--accent-wash), transparent 40%), var(--bg-inset);
+}
+
+.rules {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.rule {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.6rem;
+  align-items: start;
+  padding: 0.5rem 0.6rem;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid transparent;
+  opacity: 0.22;
+  transform: translateX(-4px);
+  transition: opacity 300ms ease, transform 300ms ease, border-color 300ms ease, background 300ms ease;
+}
+
+.ruleIn {
+  opacity: 1;
+  transform: none;
+}
+
+.ruleIcon {
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 5px;
+  margin-top: 0.1rem;
+}
+
+.ruleBody {
+  display: flex;
+  flex-direction: column;
+  gap: 0.12rem;
+  min-width: 0;
+}
+
+.ruleId {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  overflow-wrap: anywhere;
+}
+
+.ruleTitle {
+  font-size: 0.78rem;
+  color: var(--text-mid);
+  font-weight: 560;
+}
+
+.ruleWhy {
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: var(--text-lo);
+}
+
+/* per-effect colour. Icon + text both carry it, never colour alone. */
+.r_allow.ruleIn {
+  border-color: var(--accent-edge);
+  background: var(--accent-wash);
+}
+.r_allow .ruleIcon {
+  background: var(--accent-wash);
+  color: var(--accent);
+}
+.r_allow .ruleId {
+  color: var(--accent);
+}
+
+.r_deny.ruleIn {
+  border-color: rgba(248, 113, 113, 0.35);
+  background: rgba(248, 113, 113, 0.1);
+}
+.r_deny .ruleIcon {
+  background: rgba(248, 113, 113, 0.16);
+  color: rgb(248, 113, 113);
+}
+.r_deny .ruleId {
+  color: rgb(248, 113, 113);
+}
+
+.r_escalate.ruleIn {
+  border-color: rgba(251, 191, 36, 0.35);
+  background: rgba(251, 191, 36, 0.09);
+}
+.r_escalate .ruleIcon {
+  background: rgba(251, 191, 36, 0.16);
+  color: rgb(251, 191, 36);
+}
+.r_escalate .ruleId {
+  color: rgb(251, 191, 36);
+}
+
+/* ---------------- verdict ---------------- */
+
+.verdict {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.75rem;
+  align-items: center;
+  margin-top: 0.9rem;
+  padding: 0.9rem 1rem;
+  border-radius: 11px;
+  border: 1px solid;
+  opacity: 0;
+  transform: translateY(8px) scale(0.99);
+  transition: opacity 340ms ease, transform 340ms ease;
+}
+
+.verdict.in {
+  opacity: 1;
+  transform: none;
+}
+
+.verdict.out {
+  opacity: 0.2;
+}
+
+.verdictIcon {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+}
+
+.verdictWord {
+  display: block;
+  font-size: 1rem;
+  font-weight: 680;
+  letter-spacing: -0.015em;
+  margin-bottom: 0.15rem;
+}
+
+.verdictWhy {
+  margin: 0;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: var(--text-lo);
+  overflow-wrap: anywhere;
+}
+
+.v_deny {
+  border-color: rgba(248, 113, 113, 0.4);
+  background: rgba(248, 113, 113, 0.1);
+}
+.v_deny .verdictIcon {
+  background: rgba(248, 113, 113, 0.18);
+  color: rgb(248, 113, 113);
+}
+.v_deny .verdictWord {
+  color: rgb(248, 113, 113);
+}
+
+.v_escalate {
+  border-color: rgba(251, 191, 36, 0.4);
+  background: rgba(251, 191, 36, 0.09);
+}
+.v_escalate .verdictIcon {
+  background: rgba(251, 191, 36, 0.18);
+  color: rgb(251, 191, 36);
+}
+.v_escalate .verdictWord {
+  color: rgb(251, 191, 36);
+}
+
+.v_allow {
+  border-color: var(--accent-edge);
+  background: var(--accent-wash);
+}
+.v_allow .verdictIcon {
+  background: var(--accent-wash);
+  color: var(--accent);
+}
+.v_allow .verdictWord {
+  color: var(--accent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lane,
+  .rule,
+  .verdict,
+  .flowDot {
+    transition-duration: 0.01ms !important;
+  }
+  .lane.out,
+  .verdict.out {
+    opacity: 1;
+  }
+  .rule {
+    opacity: 1;
+    transform: none;
+  }
+}

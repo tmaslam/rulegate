@@ -6,6 +6,8 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { RULES } from "@/lib/fixtures";
+import GateSim from "@/components/landing/GateSim";
+import Logo from "@/components/landing/Logo";
 import s from "./landing.module.css";
 
 /**
@@ -128,7 +130,7 @@ export default function Landing() {
     <main className={s.page} ref={root}>
       <header className={s.nav}>
         <span className={s.brand}>
-          <span className={s.mark} aria-hidden="true" />
+          <Logo size={20} />
           RuleGate
         </span>
         <nav className={s.navLinks}>
@@ -173,6 +175,24 @@ export default function Landing() {
             <Check /> Every refusal names its rule
           </li>
         </ul>
+      </section>
+
+      {/* ---------------- the live gate ----------------
+          Ahead of any prose. The product is one idea and it is far easier to
+          watch than to read: pick a scenario, watch the rules decide. */}
+      <section className={s.simSection}>
+        <div className={`${s.simHead} ${s.reveal}`}>
+          <span className={s.pill}>Live · real scenarios, real rules</span>
+          <h2 className={s.h2}>Watch it decide.</h2>
+          <p className={s.sectionSub}>
+            Pick a request. The model reads it and proposes a tool call — then the policy engine evaluates each rule that
+            applies and returns a verdict. Every scenario, outcome and rationale below is the same data the console runs
+            on.
+          </p>
+        </div>
+        <div className={s.reveal}>
+          <GateSim />
+        </div>
       </section>
 
       {/* ---------------- the split ---------------- */}
