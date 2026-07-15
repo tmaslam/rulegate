@@ -1,7 +1,7 @@
 # ---------------------------------------------------------------------------
-# {{PROJECT_NAME}} — task runner
+# policy-guarded-ops-agent — task runner
 #
-# Placeholders: {{PROJECT_NAME}}, {{PACKAGE_NAME}}
+# Placeholders: policy-guarded-ops-agent, policy_guarded_ops_agent
 #
 # WINDOWS / GIT BASH
 # ------------------
@@ -33,13 +33,13 @@ MAX_DROP ?= 0.03
 .PHONY: help setup demo test eval lint fmt typecheck check clean docker-build
 
 help: ## Show this help
-	@echo "{{PROJECT_NAME}} — available targets:"
+	@echo "policy-guarded-ops-agent — available targets:"
 	@echo ""
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) \
 		| awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-14s\033[0m %s\n", $$1, $$2}'
 	@echo ""
 	@echo "No make on Windows? Use the uv equivalents:"
-	@echo "  demo      ->  uv run python -m {{PACKAGE_NAME}}.demo"
+	@echo "  demo      ->  uv run python -m policy_guarded_ops_agent.demo"
 	@echo "  test      ->  uv run pytest -m 'not live'"
 	@echo "  eval      ->  uv run python -m evals.harness run --dataset $(DATASET) --out $(RUN_DIR)/head.json"
 	@echo "  lint      ->  uv run ruff check . && uv run ruff format --check . && uv run mypy"
@@ -49,10 +49,10 @@ setup: ## Create the venv and install everything (uv handles Python 3.12 itself)
 	uv run pre-commit install
 
 demo: ## Run the demo. No API key, no network, no accounts.
-	@echo "==> {{PROJECT_NAME}} demo — offline, zero-cost, deterministic fake provider."
+	@echo "==> policy-guarded-ops-agent demo — offline, zero-cost, deterministic fake provider."
 	@echo "==> No .env required. Set provider keys only to exercise the live path."
 	uv sync --locked --dev
-	uv run python -m {{PACKAGE_NAME}}.demo
+	uv run python -m policy_guarded_ops_agent.demo
 
 test: ## Run the test suite (excludes tests marked `live`)
 	uv run pytest -m "not live"
@@ -90,4 +90,4 @@ clean: ## Remove caches and build artifacts (never touches evals/datasets)
 	find . -type d -name __pycache__ -prune -exec rm -rf {} + 2>/dev/null || true
 
 docker-build: ## Build the image. Requires Docker (NOT installed on the dev box; CI builds it).
-	docker build -t {{PROJECT_NAME}}:local .
+	docker build -t policy-guarded-ops-agent:local .

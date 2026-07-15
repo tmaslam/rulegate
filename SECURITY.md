@@ -1,6 +1,6 @@
-# Security — {{PROJECT_NAME}}
+# Security — policy-guarded-ops-agent
 
-> Placeholders: `{{PROJECT_NAME}}`, `{{CONTACT_EMAIL}}`, `{{REPO_URL}}`.
+> Placeholders: `policy-guarded-ops-agent`, `tmaslam@gmail.com`, `https://github.com/tmaslam/rulegate`.
 > **LLM01 and LLM06 below are filled in and apply as written.** The remaining
 > entries are marked `TO BE COMPLETED PER PROJECT` — fill each one in with what
 > *this* project actually does. An unedited stub is worse than an absent
@@ -16,7 +16,7 @@ Mapped to the [OWASP Top 10 for LLM Applications (2025)](https://owasp.org/www-p
 
 ## Reporting a vulnerability
 
-Email {{CONTACT_EMAIL}} with reproduction steps. Please do not open a public
+Email tmaslam@gmail.com with reproduction steps. Please do not open a public
 issue for anything exploitable. This is a personal demo repo maintained on a
 best-effort basis — expect a reply within a week, and no bounty.
 
@@ -178,7 +178,7 @@ retry schedule (1/2/4/8s, then fail over — never unbounded).
 
 ## Threat model boundaries
 
-**In scope:** the application code in {{REPO_URL}}, its prompt/tool surface, its
+**In scope:** the application code in https://github.com/tmaslam/rulegate, its prompt/tool surface, its
 handling of untrusted retrieved content, and its dependency manifest.
 
 **Out of scope:** the security of the free-tier providers themselves (Groq,

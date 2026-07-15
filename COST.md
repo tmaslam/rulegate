@@ -1,6 +1,6 @@
-# Cost — {{PROJECT_NAME}}
+# Cost — policy-guarded-ops-agent
 
-> Placeholders: `{{PROJECT_NAME}}`.
+> Placeholders: `policy-guarded-ops-agent`.
 >
 > **Every value cell in this document reads `not yet run`.** That is not an
 > oversight and it is not a placeholder to be filled with something plausible.

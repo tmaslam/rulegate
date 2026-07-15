@@ -1,8 +1,8 @@
 # syntax=docker/dockerfile:1.9
 # ---------------------------------------------------------------------------
-# {{PROJECT_NAME}} — multi-stage build: uv builder -> slim runtime, non-root.
+# policy-guarded-ops-agent — multi-stage build: uv builder -> slim runtime, non-root.
 #
-# Placeholders: {{PROJECT_NAME}}, {{PACKAGE_NAME}}
+# Placeholders: policy-guarded-ops-agent, policy_guarded_ops_agent
 #
 # NOTE FOR THE AUTHOR: this was written and reviewed by inspection — Docker is
 # not installed on the dev machine. CI (`docker/build-push-action`) is the first
@@ -10,8 +10,8 @@
 # free on public repos. Do not add a local `docker build` step to any Makefile
 # target that must work offline.
 #
-# Build:  docker build -t {{PROJECT_NAME}} .
-# Run:    docker run --rm -p 8000:8000 --env-file .env {{PROJECT_NAME}}
+# Build:  docker build -t policy-guarded-ops-agent .
+# Run:    docker run --rm -p 8000:8000 --env-file .env policy-guarded-ops-agent
 #
 # Runs with NO env file too: no keys => deterministic fake provider, tracing
 # no-ops, SQLite fallback. That is the zero-account path and it is supported.
@@ -92,4 +92,4 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
 # can drain connections instead of SIGKILLing after the grace period.
 # Single worker: free tiers give a fraction of a core, and the workload is
 # I/O-bound on the provider — async concurrency beats process count here.
-CMD ["uvicorn", "{{PACKAGE_NAME}}.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "1"]
+CMD ["uvicorn", "policy_guarded_ops_agent.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "1"]

@@ -1,4 +1,4 @@
-# Copy to `.github/workflows/ci.yml` and substitute {{PROJECT_NAME}}.
+# Copy to `.github/workflows/ci.yml` and substitute policy-guarded-ops-agent.
 #
 # The `.tmpl` suffix keeps this inert until copied: GitHub only runs files
 # ending `.yml`/`.yaml` under `.github/workflows/`. Everything below is valid
@@ -215,7 +215,7 @@ jobs:
           context: .
           push: false
           load: true
-          tags: {{PROJECT_NAME}}:ci
+          tags: policy-guarded-ops-agent:ci
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -223,8 +223,8 @@ jobs:
         # Proves the venv, PATH and non-root user are wired correctly — the
         # errors most likely to survive a green `docker build`.
         run: |
-          docker run --rm --entrypoint python {{PROJECT_NAME}}:ci -c "import sys; print(sys.version)"
+          docker run --rm --entrypoint python policy-guarded-ops-agent:ci -c "import sys; print(sys.version)"
           echo "non-root check:"
-          test "$(docker run --rm --entrypoint id {{PROJECT_NAME}}:ci -u)" != "0" \
+          test "$(docker run --rm --entrypoint id policy-guarded-ops-agent:ci -u)" != "0" \
             && echo "OK: container does not run as root" \
             || (echo "FAIL: container runs as root" && exit 1)

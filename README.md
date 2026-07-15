@@ -1,7 +1,7 @@
-# {{PROJECT_NAME}}
+# policy-guarded-ops-agent
 
-> **Placeholders:** `{{PROJECT_NAME}}`, `{{PACKAGE_NAME}}`, `{{PROJECT_DESC}}`,
-> `{{REPO_URL}}`, `{{LIVE_DEMO_URL}}`, `{{ONE_LINE_PITCH}}`, and the
+> **Placeholders:** `policy-guarded-ops-agent`, `policy_guarded_ops_agent`, `An AI operations agent whose business rules live in deterministic code, not in a prompt.`,
+> `https://github.com/tmaslam/rulegate`, `https://rulegate.vvtechsol1.workers.dev`, `The LLM proposes. Code decides.`, and the
 > `{{...}}` markers in the architecture/trade-off sections.
 >
 > **Rules for filling this in — read before typing a single number:**
@@ -16,9 +16,9 @@
 > 4. Never imply this was paid client work. It is a demo build.
 > 5. Delete this block when you're done.
 
-{{ONE_LINE_PITCH}}
+The LLM proposes. Code decides.
 
-**Live demo:** {{LIVE_DEMO_URL}} · **Source:** {{REPO_URL}}
+**Live demo:** https://rulegate.vvtechsol1.workers.dev · **Source:** https://github.com/tmaslam/rulegate
 
 > **This is a demonstration project, not client work.** It is built to
 > production patterns — typed boundaries, real error handling, versioned evals,
@@ -30,7 +30,7 @@
 ## Quickstart — no API key, no accounts, no network
 
 ```bash
-git clone {{REPO_URL}} && cd {{PROJECT_NAME}}
+git clone https://github.com/tmaslam/rulegate && cd policy-guarded-ops-agent
 make demo
 ```
 
@@ -54,7 +54,7 @@ Nothing here is make-only:
 
 | Target | Equivalent |
 | --- | --- |
-| `make demo` | `uv run python -m {{PACKAGE_NAME}}.demo` |
+| `make demo` | `uv run python -m policy_guarded_ops_agent.demo` |
 | `make test` | `uv run pytest -m "not live"` |
 | `make eval` | `uv run python -m evals.harness run --dataset evals/datasets/golden.v1.jsonl --out evals/runs/head.json` |
 | `make lint` | `uv run ruff check . && uv run ruff format --check . && uv run mypy` |
@@ -71,7 +71,7 @@ flowchart TB
     U["Client / UI<br/>(Next.js on Vercel — free)"] --> API
 
     subgraph APP["FastAPI service (HF Spaces / Render — free)"]
-        API["POST /{{PACKAGE_NAME}}"] --> GIN["Input guardrails<br/>every request, no LLM call"]
+        API["POST /policy_guarded_ops_agent"] --> GIN["Input guardrails<br/>every request, no LLM call"]
         GIN -->|blocked / abstain| REF["Structured refusal<br/>+ reason code"]
         GIN -->|allowed| CORE["Scaffold<br/>deterministic code decides the flow"]
         CORE --> GW["LLM Gateway (LiteLLM)"]
@@ -230,8 +230,8 @@ that a number from one gets reported as the other. Called out in the failure tab
 ## Project layout
 
 ```
-{{PROJECT_NAME}}/
-├── src/{{PACKAGE_NAME}}/
+policy-guarded-ops-agent/
+├── src/policy_guarded_ops_agent/
 │   ├── llm/gateway.py        # LiteLLM gateway: fallback, retry, breaker, budget
 │   ├── obs/tracing.py        # OTel GenAI -> Langfuse; no-ops when unset
 │   ├── guardrails/base.py    # per-request input/output filters + refusal path
