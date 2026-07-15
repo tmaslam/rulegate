@@ -226,12 +226,30 @@
 /* ── table ─────────────────────────────────────────────────────────────── */
 
 /* The scroll container. The body never scrolls sideways — this does. */
+/* No overflow here at wide widths, and that is deliberate.
+   Any overflow value other than `visible` makes this a scroll container, and a
+   sticky <th> then sticks to THIS box instead of the viewport. Because the box
+   never scrolls vertically, the header just parked itself --bar-h below the
+   wrapper's top and sat on top of the first row. Below 1100px the table is wider
+   than the screen, so there we do want a scroll container — and there the header
+   is set back to static, since sticky is meaningless once you are panning. */
 .tableWrap {
   border: 1px solid var(--border);
   border-radius: var(--r-3);
   background: var(--bg-surface);
-  overflow-x: auto;
-  overflow-y: hidden;
+}
+
+@media (max-width: 1100px) {
+  .tableWrap {
+    overflow-x: auto;
+  }
+
+  /* Sticky inside a scroll container sticks to the CONTAINER, not the viewport.
+     Once the wrapper scrolls, the header has to go static or it parks itself
+     over the first row. */
+  .table thead th {
+    position: static;
+  }
 }
 
 .table {
@@ -293,7 +311,7 @@
   background: var(--bg-hover);
 }
 
-/* The cursor row gets a lime edge — the same language as the nav rail. */
+/* The cursor row gets an accent edge — the same language as the nav rail. */
 .row[data-cursor="true"] {
   border-left-color: var(--accent);
 }
@@ -507,7 +525,4 @@
     display: none;
   }
 
-  .table thead th {
-    position: static;
-  }
 }

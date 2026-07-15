@@ -10,7 +10,19 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Final
 
-from fastapi import Request
+# CRITICAL — `Request` must stay a RUNTIME import; do not "fix" this TC002.
+#
+# Same class of hazard as the pydantic/langgraph ones in pyproject.toml, and this
+# one fails silently rather than loudly. FastAPI resolves this signature at route
+# registration to decide what `request` is. Behind `if TYPE_CHECKING:` the name is
+# unresolvable, so FastAPI stops recognising it as the Request object and demotes
+# it to a **query parameter** — every call to a route depending on get_runtime
+# then returns `422 {"loc": ["query", "request"], "msg": "Field required"}`
+# instead of running. No NameError, no import error: just a dead endpoint.
+#
+# Verified on this venv's fastapi: identical dependency with the import under
+# TYPE_CHECKING returns 422; with the runtime import below it returns 200.
+from fastapi import Request  # noqa: TC002
 
 if TYPE_CHECKING:
     from policy_guarded_ops_agent.runtime import AgentRuntime

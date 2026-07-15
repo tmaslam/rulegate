@@ -82,7 +82,7 @@
   color: var(--text-mid);
 }
 
-/* Active row is background + a lime edge, not colour alone. */
+/* Active row is background + an accent edge, not colour alone. */
 .opt[data-active="true"] {
   background: var(--bg-hover);
   color: var(--text-hi);

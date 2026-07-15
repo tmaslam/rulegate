@@ -2,6 +2,16 @@
    Built on the console's existing tokens (cool navy, blue accent) so the page
    and the product it opens into read as one thing. */
 
+/* ---------------- the shell ----------------
+   --shell is the page width and --gutter the side inset. Everything that spans
+   the page uses BOTH, so every band shares one left edge and one right edge.
+   Change them here and the whole page stays aligned. */
+:root {
+  --shell: 1240px;
+  --gutter: clamp(1rem, 4vw, 2.5rem);
+}
+
+
 .page {
   min-height: 100dvh;
   background: var(--bg-base);
@@ -10,18 +20,28 @@
 
 /* ---------------- nav ---------------- */
 
+/* A floating card rather than a full-bleed bar. It reads as a control surface
+   sitting on the page instead of a chrome strip bolted to the top of it, and it
+   lets the hero's bloom run behind and past it. */
 .nav {
   position: sticky;
-  top: 0;
+  top: clamp(0.5rem, 1.5vw, 0.9rem);
   z-index: 20;
+  max-width: var(--shell);
+  margin: clamp(0.5rem, 1.5vw, 0.9rem) auto 0;
+  margin-left: max(var(--gutter), calc(50vw - var(--shell) / 2));
+  margin-right: max(var(--gutter), calc(50vw - var(--shell) / 2));
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  padding: 0.85rem clamp(1rem, 4vw, 2.5rem);
-  background: color-mix(in srgb, var(--bg-base) 82%, transparent);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--border, rgba(255, 255, 255, 0.07));
+  padding: 0.6rem 0.7rem 0.6rem 1rem;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--bg-surface) 88%, transparent);
+  -webkit-backdrop-filter: blur(14px) saturate(1.4);
+  backdrop-filter: blur(14px) saturate(1.4);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-2);
 }
 
 .brand {
@@ -93,7 +113,7 @@
   position: relative;
   overflow: hidden;
   text-align: center;
-  padding: clamp(4rem, 12vh, 8rem) clamp(1rem, 5vw, 2rem) clamp(3.5rem, 8vh, 5.5rem);
+  padding: clamp(3.5rem, 9vh, 6rem) var(--gutter) clamp(3rem, 7vh, 4.5rem);
 }
 
 /* A single soft blue bloom. Not a gradient soup. */
@@ -124,22 +144,24 @@
   background: var(--accent-wash);
 }
 
+/* Not a flex column: the accent has to start mid-line, the way it reads aloud —
+   "Your AI agent will *break your business rules*." Forcing a break after "will"
+   put the emphasis in the wrong place and made the line lengths ragged. */
 .h1 {
   position: relative;
-  margin: 0 auto 1.4rem;
-  max-width: 17ch;
-  font-size: clamp(2.4rem, 7vw, 4.6rem);
-  line-height: 1.02;
-  letter-spacing: -0.04em;
-  font-weight: 680;
+  margin: 0 auto 1.5rem;
+  max-width: 15ch;
+  font-size: clamp(2.6rem, 6.2vw, 4.4rem);
+  line-height: 1.04;
+  letter-spacing: -0.038em;
+  font-weight: 700;
   color: var(--text-hi);
-  display: flex;
-  flex-direction: column;
-  gap: 0.08em;
+  text-wrap: balance;
 }
 
 .heroLine {
-  display: block;
+  /* inline, so the sentence wraps naturally and the accent picks up mid-line */
+  display: inline;
 }
 
 .accentText {
@@ -230,9 +252,9 @@
 /* ---------------- sections ---------------- */
 
 .section {
-  max-width: 1120px;
+  max-width: var(--shell);
   margin: 0 auto;
-  padding: clamp(3rem, 9vh, 6rem) clamp(1rem, 5vw, 2rem);
+  padding: clamp(3rem, 9vh, 6rem) var(--gutter);
 }
 
 .sectionHead {
@@ -575,12 +597,7 @@
 
 /* ---------------- cta + footer ---------------- */
 
-.cta {
-  max-width: 760px;
-  margin: 0 auto;
-  padding: clamp(3rem, 9vh, 6rem) clamp(1rem, 5vw, 2rem);
-  text-align: center;
-}
+
 
 
 
@@ -596,9 +613,9 @@
 /* ---------------- live sim section ---------------- */
 
 .simSection {
-  max-width: 900px;
+  max-width: var(--shell);
   margin: 0 auto;
-  padding: 0 clamp(1rem, 5vw, 2rem) clamp(3rem, 8vh, 5rem);
+  padding: 0 var(--gutter) clamp(3rem, 8vh, 5rem);
 }
 
 .simHead {
@@ -615,9 +632,9 @@
 }
 
 .footTop {
-  max-width: 1120px;
+  max-width: var(--shell);
   margin: 0 auto;
-  padding: clamp(2.5rem, 6vh, 4rem) clamp(1rem, 5vw, 2rem) clamp(1.5rem, 4vh, 2.5rem);
+  padding: clamp(2.5rem, 6vh, 4rem) var(--gutter) clamp(1.5rem, 4vh, 2.5rem);
   display: grid;
   grid-template-columns: minmax(0, 1.6fr) repeat(3, minmax(0, 1fr));
   gap: clamp(1.5rem, 4vw, 3rem);
@@ -681,9 +698,9 @@
 }
 
 .footBottom {
-  max-width: 1120px;
+  max-width: var(--shell);
   margin: 0 auto;
-  padding: 1.25rem clamp(1rem, 5vw, 2rem) 3rem;
+  padding: 1.25rem var(--gutter) 3rem;
   border-top: 1px solid var(--border-subtle);
   display: flex;
   flex-wrap: wrap;
@@ -702,4 +719,35 @@
   font-family: var(--font-mono);
   font-size: 0.92em;
   color: var(--text-mid);
+}
+
+/* ---------------- lifted panels ----------------
+   Some sections sit on the canvas, some are lifted onto a white panel. The
+   alternation is what stops a long page reading as one undifferentiated slab —
+   and it puts the two moments that matter most (how it decides, and the
+   ON/OFF proof) on their own stage. */
+
+.panel {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: clamp(14px, 2vw, 22px);
+  padding: clamp(1.75rem, 5vw, 3.5rem) clamp(1.25rem, 4vw, 3rem);
+  box-shadow: var(--shadow-1);
+}
+
+.panel .sectionHead {
+  margin-bottom: clamp(1.75rem, 4vh, 2.75rem);
+}
+
+/* Cards inside a panel would otherwise be surface-on-surface and vanish. */
+.panel .step {
+  background: var(--bg-canvas);
+}
+
+.panelTight {
+  padding: clamp(2rem, 5vw, 3.25rem) clamp(1.25rem, 4vw, 3rem);
+}
+
+.panelTight .sectionHead {
+  margin-bottom: clamp(1.25rem, 3vh, 1.75rem);
 }

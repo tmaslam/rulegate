@@ -18,7 +18,9 @@ from policy_guarded_ops_agent.fakes.fake_llm import (
     user_request,
 )
 from policy_guarded_ops_agent.llm.gateway import (
+    FREE_TIER_PROVIDERS,
     AllProvidersFailedError,
+    BackendResult,
     BudgetExceededError,
     BudgetLedger,
     ChatMessage,
@@ -29,6 +31,7 @@ from policy_guarded_ops_agent.llm.gateway import (
     PriceSpec,
     ProviderError,
     ProviderSpec,
+    Sleeper,
     TokenBucket,
     Usage,
     build_default_chain,
@@ -64,7 +67,9 @@ class TestCompletion:
 
 
 class TestRetry:
-    async def test_backoff_schedule_is_1_2_4_8(self, spec: ProviderSpec, instant_sleep) -> None:
+    async def test_backoff_schedule_is_1_2_4_8(
+        self, spec: ProviderSpec, instant_sleep: tuple[list[float], Sleeper]
+    ) -> None:
         slept, sleeper = instant_sleep
         backend = FakeLLMBackend(
             rules=[FakeRule(contains="ping", response="pong")],
@@ -81,7 +86,9 @@ class TestRetry:
         assert slept == [1.0, 2.0, 4.0, 8.0]
         assert response.attempts == 5
 
-    async def test_retries_on_5xx(self, spec: ProviderSpec, instant_sleep) -> None:
+    async def test_retries_on_5xx(
+        self, spec: ProviderSpec, instant_sleep: tuple[list[float], Sleeper]
+    ) -> None:
         _, sleeper = instant_sleep
         backend = FakeLLMBackend(
             rules=[FakeRule(contains="ping", response="pong")],
@@ -90,7 +97,9 @@ class TestRetry:
         gateway = Gateway(chain=[spec], backend=backend, sleeper=sleeper, jitter=lambda d: d)
         assert (await gateway.acomplete(user_request("ping"))).text == "pong"
 
-    async def test_does_not_retry_4xx(self, spec: ProviderSpec, instant_sleep) -> None:
+    async def test_does_not_retry_4xx(
+        self, spec: ProviderSpec, instant_sleep: tuple[list[float], Sleeper]
+    ) -> None:
         slept, sleeper = instant_sleep
         backend = FakeLLMBackend(
             rules=[FakeRule(contains="ping", response="pong")],
@@ -103,7 +112,9 @@ class TestRetry:
         assert slept == []
         assert backend.call_count == 1
 
-    async def test_jitter_is_applied_within_bounds(self, spec: ProviderSpec, instant_sleep) -> None:
+    async def test_jitter_is_applied_within_bounds(
+        self, spec: ProviderSpec, instant_sleep: tuple[list[float], Sleeper]
+    ) -> None:
         slept, sleeper = instant_sleep
         backend = FakeLLMBackend(
             rules=[FakeRule(contains="ping", response="pong")],
@@ -117,7 +128,9 @@ class TestRetry:
 
 
 class TestFallback:
-    async def test_falls_over_to_next_provider(self, instant_sleep):
+    async def test_falls_over_to_next_provider(
+        self, instant_sleep: tuple[list[float], Sleeper]
+    ) -> None:
         _, sleeper = instant_sleep
         alpha, beta = fake_provider_spec("alpha"), fake_provider_spec("beta")
 
@@ -126,7 +139,13 @@ class TestFallback:
                 self.inner = FakeLLMBackend(rules=[FakeRule(contains="hi", response="from-beta")])
                 self.seen: list[str] = []
 
-            async def acomplete(self, spec, request, *, timeout_s):
+            async def acomplete(
+                self,
+                spec: ProviderSpec,
+                request: CompletionRequest,
+                *,
+                timeout_s: float,
+            ) -> BackendResult:
                 self.seen.append(spec.name)
                 if spec.name == "alpha":
                     msg = "alpha is down"
@@ -140,7 +159,9 @@ class TestFallback:
         assert response.provider == "beta"
         assert response.fallback_path == ("alpha",)
 
-    async def test_exhausted_chain_reports_every_cause(self, spec: ProviderSpec, instant_sleep) -> None:
+    async def test_exhausted_chain_reports_every_cause(
+        self, spec: ProviderSpec, instant_sleep: tuple[list[float], Sleeper]
+    ) -> None:
         _, sleeper = instant_sleep
         backend = FakeLLMBackend(
             failures=[ScriptedFailure(on_call=i, status_code=500) for i in range(1, 30)]
@@ -159,10 +180,16 @@ class TestCircuitBreaker:
     def test_opens_after_threshold(self) -> None:
         now = [0.0]
         breaker = CircuitBreaker(failure_threshold=3, recovery_timeout_s=30, clock=lambda: now[0])
-        assert breaker.state is CircuitState.CLOSED
+        # Each read goes through an explicitly-annotated local. `state` is a
+        # property mypy cannot see `record_failure()` mutate, so asserting on it
+        # directly narrows it to a Literal for the rest of the function and makes
+        # the post-mutation assert look unreachable.
+        before: CircuitState = breaker.state
+        assert before is CircuitState.CLOSED
         for _ in range(3):
             breaker.record_failure()
-        assert breaker.state is CircuitState.OPEN
+        after: CircuitState = breaker.state
+        assert after is CircuitState.OPEN
         assert not breaker.allow()
 
     def test_half_opens_after_recovery_and_admits_one_probe(self) -> None:
@@ -177,13 +204,15 @@ class TestCircuitBreaker:
     def test_success_closes_the_circuit(self) -> None:
         breaker = CircuitBreaker(failure_threshold=1, recovery_timeout_s=30)
         breaker.record_failure()
-        assert breaker.state is CircuitState.OPEN
+        opened: CircuitState = breaker.state
+        assert opened is CircuitState.OPEN
         breaker.record_success()
-        assert breaker.state is CircuitState.CLOSED
+        closed: CircuitState = breaker.state
+        assert closed is CircuitState.CLOSED
 
     async def test_gateway_opens_circuit_on_repeated_failure(
-        self, spec: ProviderSpec, instant_sleep
-    ):
+        self, spec: ProviderSpec, instant_sleep: tuple[list[float], Sleeper]
+    ) -> None:
         _, sleeper = instant_sleep
         now = [0.0]
         backend = FakeLLMBackend(
@@ -204,7 +233,9 @@ class TestCircuitBreaker:
 
 
 class TestRateLimiter:
-    async def test_bucket_allows_burst_then_throttles(self, instant_sleep) -> None:
+    async def test_bucket_allows_burst_then_throttles(
+        self, instant_sleep: tuple[list[float], Sleeper]
+    ) -> None:
         slept, sleeper = instant_sleep
         now = [0.0]
         bucket = TokenBucket(rate_per_minute=60, burst=2, clock=lambda: now[0], sleeper=sleeper)
@@ -221,7 +252,9 @@ class TestRateLimiter:
 
 
 class TestBudget:
-    async def test_unknown_price_is_not_fabricated_as_zero(self, instant_sleep):
+    async def test_unknown_price_is_not_fabricated_as_zero(
+        self, instant_sleep: tuple[list[float], Sleeper]
+    ) -> None:
         # A provider with no price list must yield cost None and be counted as
         # unpriced, never silently recorded as $0.
         _, _ = instant_sleep
@@ -333,12 +366,8 @@ class TestDefaultChain:
     def test_openrouter_default_model_is_a_free_variant(self) -> None:
         # The `:free` suffix is what keeps OpenRouter zero-cost. If this ever
         # regresses, the repo silently starts costing money.
-        from policy_guarded_ops_agent.llm.gateway import FREE_TIER_PROVIDERS
-
         assert FREE_TIER_PROVIDERS["openrouter"].model.endswith(":free")
 
     def test_every_registry_provider_is_free(self) -> None:
-        from policy_guarded_ops_agent.llm.gateway import FREE_TIER_PROVIDERS
-
         for name, provider in FREE_TIER_PROVIDERS.items():
             assert provider.price.is_free_tier, f"{name} is not marked free"

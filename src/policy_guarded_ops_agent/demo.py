@@ -163,9 +163,10 @@ async def _run_arm(*, policy_enabled: bool, db_path: Path) -> tuple[int, int, li
 
             lines.append(f"  {scenario.name}")
             lines.append(f"    -> {outcome}")
-            if found:
-                for violation in found:
-                    lines.append(f"    !! VIOLATION [{violation.rule_id}] {violation.rationale}")
+            lines.extend(
+                f"    !! VIOLATION [{violation.rule_id}] {violation.rationale}"
+                for violation in found
+            )
             lines.append("")
 
     return violations, len(_SCENARIOS), lines

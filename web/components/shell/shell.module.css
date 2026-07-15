@@ -64,7 +64,7 @@
   background: var(--bg-hover);
 }
 
-/* Active is a lime rail on the edge + a lit glyph. Two signals, and the rail
+/* Active is an accent rail on the edge + a lit glyph. Two signals, and the rail
    reads at a glance from across a desk. */
 .railLink[data-active] {
   color: var(--accent);

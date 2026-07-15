@@ -72,9 +72,13 @@ def build_gateway(
         A gateway. Never raises for a missing key — that is a supported state.
     """
     if backend is not None:
-        return Gateway(chain=[fake_provider_spec()], backend=backend, timeout_s=settings.llm_timeout_s)
+        return Gateway(
+            chain=[fake_provider_spec()], backend=backend, timeout_s=settings.llm_timeout_s
+        )
 
-    env = {"LLM_FALLBACK_CHAIN": settings.llm_fallback_chain} if settings.llm_fallback_chain else None
+    env = (
+        {"LLM_FALLBACK_CHAIN": settings.llm_fallback_chain} if settings.llm_fallback_chain else None
+    )
     chain = build_default_chain(env)
     if chain:
         log.info("gateway_live", providers=[s.name for s in chain])

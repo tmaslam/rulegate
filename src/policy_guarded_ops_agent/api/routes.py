@@ -25,7 +25,6 @@ from typing import TYPE_CHECKING, Any, Final
 
 import structlog
 from fastapi import APIRouter, Depends, HTTPException, Query, status
-from langchain_core.runnables import RunnableConfig
 from langgraph.types import Command
 
 from policy_guarded_ops_agent.agent.state import RunStatus
@@ -55,6 +54,11 @@ from policy_guarded_ops_agent.approvals.queue import AlreadyResolvedError, Appro
 from policy_guarded_ops_agent.obs.tracing import TracingConfig
 
 if TYPE_CHECKING:
+    # RunnableConfig appears only on local-variable annotations, which Python
+    # never evaluates at runtime (PEP 526). Unlike the FastAPI signature
+    # annotations below, it is safe behind TYPE_CHECKING.
+    from langchain_core.runnables import RunnableConfig
+
     from policy_guarded_ops_agent.agent.state import AgentState
     from policy_guarded_ops_agent.runtime import AgentRuntime
 
@@ -297,7 +301,7 @@ async def create_run(
 
 
 # ---------------------------------------------------------------------------
-# Approvals (HITL)
+# Approvals: human-in-the-loop
 # ---------------------------------------------------------------------------
 
 

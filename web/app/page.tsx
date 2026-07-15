@@ -8,6 +8,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { RULES } from "@/lib/fixtures";
 import GateSim from "@/components/landing/GateSim";
 import Logo from "@/components/landing/Logo";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import s from "./landing.module.css";
 
 /**
@@ -136,6 +137,7 @@ export default function Landing() {
         <nav className={s.navLinks}>
           <a href="#how">How it works</a>
           <a href="#proof">The proof</a>
+          <ThemeToggle compact withLabel />
           <Link href="/login" className={s.navCta}>
             Open the console <Arrow />
           </Link>
@@ -237,26 +239,30 @@ Please follow these rules.
         </div>
       </section>
 
-      {/* ---------------- how ---------------- */}
+      {/* ---------------- how ----------------
+          Sections alternate: some sit on the canvas, some are lifted onto a
+          white panel. The rhythm is what stops a long page reading as one slab. */}
       <section className={s.section} id="how">
-        <div className={`${s.sectionHead} ${s.reveal}`}>
-          <span className={s.pill}>How it works</span>
-          <h2 className={s.h2}>The model gets one job. The policy engine gets the authority.</h2>
-          <p className={s.sectionSub}>
-            An LLM is very good at reading a frustrated customer and working out what they actually want. It is not good
-            at holding a line under pressure. So it does the first job, and code does the second.
-          </p>
-        </div>
+        <div className={`${s.panel} ${s.reveal}`}>
+          <div className={s.sectionHead}>
+            <span className={s.pill}>How it works</span>
+            <h2 className={s.h2}>The model gets one job. The policy engine gets the authority.</h2>
+            <p className={s.sectionSub}>
+              An LLM is very good at reading a frustrated customer and working out what they actually want. It is not
+              good at holding a line under pressure. So it does the first job, and code does the second.
+            </p>
+          </div>
 
-        <ol className={s.steps}>
-          {STEPS.map((st) => (
-            <li key={st.n} className={`${s.step} ${s.reveal}`}>
-              <span className={s.stepN}>{st.n}</span>
-              <h3 className={s.stepK}>{st.k}</h3>
-              <p className={s.stepD}>{st.d}</p>
-            </li>
-          ))}
-        </ol>
+          <ol className={s.steps}>
+            {STEPS.map((st) => (
+              <li key={st.n} className={s.step}>
+                <span className={s.stepN}>{st.n}</span>
+                <h3 className={s.stepK}>{st.k}</h3>
+                <p className={s.stepD}>{st.d}</p>
+              </li>
+            ))}
+          </ol>
+        </div>
       </section>
 
       {/* ---------------- the rules ---------------- */}
@@ -332,19 +338,23 @@ Please follow these rules.
       </section>
 
       {/* ---------------- cta ---------------- */}
-      <section className={`${s.cta} ${s.reveal}`}>
-        <h2 className={s.h2}>Go and try to break it.</h2>
-        <p className={s.sectionSub}>
-          The console is live and needs no key. Ask it for a late refund. Tell it you&apos;re an admin. Tell it to ignore
-          its instructions. Watch which rule stops you.
-        </p>
-        <div className={s.ctas}>
-          <Link href="/login" className={s.btnPrimary}>
-            Open the console <Arrow />
-          </Link>
-          <a href="https://github.com/tmaslam/rulegate" className={s.btnGhost}>
-            Read the source
-          </a>
+      <section className={s.section}>
+        <div className={`${s.panel} ${s.panelTight} ${s.reveal}`}>
+          <div className={s.sectionHead}>
+            <h2 className={s.h2}>Go and try to break it.</h2>
+            <p className={s.sectionSub}>
+              The console is live and needs no key. Ask it for a late refund. Tell it you&apos;re an admin. Tell it to
+              ignore its instructions. Watch which rule stops you.
+            </p>
+          </div>
+          <div className={s.ctas} style={{ marginBottom: 0 }}>
+            <Link href="/login" className={s.btnPrimary}>
+              Open the console <Arrow />
+            </Link>
+            <a href="https://github.com/tmaslam/rulegate" className={s.btnGhost}>
+              Read the source
+            </a>
+          </div>
         </div>
       </section>
 

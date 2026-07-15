@@ -336,7 +336,7 @@ svg {
 }
 
 /* Focus: one visible ring, everywhere, no exceptions. Two-tone so it survives
-   on both the lime accent and every signal wash. */
+   on both the accent and every signal wash. */
 :focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;

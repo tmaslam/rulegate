@@ -28,7 +28,8 @@ class TestConfig:
         assert not TracingConfig(env={"LANGFUSE_PUBLIC_KEY": "pk"}).enabled
 
     def test_blank_keys_do_not_enable(self) -> None:
-        assert not TracingConfig(env={"LANGFUSE_PUBLIC_KEY": " ", "LANGFUSE_SECRET_KEY": " "}).enabled
+        config = TracingConfig(env={"LANGFUSE_PUBLIC_KEY": " ", "LANGFUSE_SECRET_KEY": " "})
+        assert not config.enabled
 
     def test_enabled_with_both_keys(self) -> None:
         assert TracingConfig(env={"LANGFUSE_PUBLIC_KEY": "pk", "LANGFUSE_SECRET_KEY": "sk"}).enabled
@@ -42,7 +43,7 @@ class TestConfig:
 
     def test_auth_header_is_basic_base64(self) -> None:
         config = TracingConfig(env={"LANGFUSE_PUBLIC_KEY": "pk", "LANGFUSE_SECRET_KEY": "sk"})
-        # base64("pk:sk") == "cGs6c2s="
+        # The expected value is the base64 encoding of the string pk:sk.
         assert config.otlp_headers["Authorization"] == "Basic cGs6c2s="
 
     @pytest.mark.parametrize(
@@ -81,8 +82,12 @@ class TestNoOpGuarantee:
         assert span.recorded
 
     def test_exception_propagates_and_is_not_swallowed(self) -> None:
+        # llm_span stays INSIDE pytest.raises: the point is that the span's
+        # __exit__ sees the exception and re-raises rather than swallowing it.
+        # Swapping the two would let pytest.raises catch it first and the test
+        # would pass even if llm_span did swallow.
+        msg = "boom"
         with pytest.raises(RuntimeError, match="boom"), llm_span(user_request("x")):
-            msg = "boom"
             raise RuntimeError(msg)
 
     def test_helpers_are_safe_with_no_active_span(self) -> None:

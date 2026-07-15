@@ -23,7 +23,7 @@ function systemTheme(): Theme {
     : "light";
 }
 
-export function ThemeToggle({ compact = false }: { compact?: boolean }) {
+export function ThemeToggle({ compact = false, withLabel = false }: { compact?: boolean; withLabel?: boolean }) {
   // Start undefined so SSG markup and first client paint agree; the real value
   // arrives in the effect. The inline script has already painted the right
   // colours by then, so there is no flash to chase here.
@@ -58,7 +58,7 @@ export function ThemeToggle({ compact = false }: { compact?: boolean }) {
     <button
       type="button"
       onClick={toggle}
-      className={`${styles.toggle} ${compact ? styles.compact : ""}`}
+      className={`${styles.toggle} ${compact ? styles.compact : ""} ${withLabel ? styles.labelled : ""}`}
       aria-label={label}
       title={label}
     >
@@ -66,6 +66,10 @@ export function ThemeToggle({ compact = false }: { compact?: boolean }) {
         <IconSun size={compact ? 14 : 15} />
         <IconMoon size={compact ? 14 : 15} />
       </span>
+      {/* The console's rail is icon-only — there is no room and the affordance is
+          already learned. On the landing page a visitor sees it once, so it says
+          what it is. aria-label carries the action either way. */}
+      {withLabel && <span className={styles.labelText}>Theme</span>}
     </button>
   );
 }

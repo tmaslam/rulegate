@@ -2,13 +2,12 @@
 
 from __future__ import annotations
 
-from collections.abc import Iterator
 from decimal import Decimal
 
 import pytest
 
 from policy_guarded_ops_agent.fakes.fake_llm import FakeLLMBackend, FakeRule, fake_provider_spec
-from policy_guarded_ops_agent.llm.gateway import BudgetLedger, Gateway, ProviderSpec
+from policy_guarded_ops_agent.llm.gateway import BudgetLedger, Gateway, ProviderSpec, Sleeper
 
 
 @pytest.fixture
@@ -29,7 +28,7 @@ def backend() -> FakeLLMBackend:
 
 
 @pytest.fixture
-def instant_sleep() -> tuple[list[float], object]:
+def instant_sleep() -> tuple[list[float], Sleeper]:
     """A sleeper that records delays instead of waiting.
 
     Returns the recording list and the coroutine function. Keeps retry tests at

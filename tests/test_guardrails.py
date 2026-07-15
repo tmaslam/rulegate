@@ -228,7 +228,7 @@ class TestPipeline:
         assert not decision.allowed
         assert decision.is_abstention
 
-    def test_terminal_verdict_without_refusal_fails_loudly(self):
+    def test_terminal_verdict_without_refusal_fails_loudly(self) -> None:
         # Wiring error: a BLOCK with no Refusal leaves the caller nothing to say
         # to the user. Better to raise at wiring time than serve an empty string.
         class BadFilter:
@@ -236,7 +236,7 @@ class TestPipeline:
             def name(self) -> str:
                 return "bad"
 
-            def check(self, ctx: InputContext) -> FilterResult:
+            def check(self, _ctx: InputContext) -> FilterResult:
                 return FilterResult(verdict=Verdict.BLOCK, filter_name="bad")
 
         pipeline = GuardrailPipeline(input_filters=[BadFilter()])

@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import json
 from decimal import Decimal
-from pathlib import Path
+from typing import TYPE_CHECKING
 
 import pytest
 
@@ -36,6 +36,9 @@ from evals.harness import (
     wilson_interval,
 )
 
+if TYPE_CHECKING:
+    from pathlib import Path
+
 # ---------------------------------------------------------------------------
 # Assertions
 # ---------------------------------------------------------------------------
@@ -51,7 +54,8 @@ class TestAssertions:
     def test_failure_detail_is_actionable(self) -> None:
         outcome = ExactMatch(value="ACK").evaluate("NAK", latency_ms=1)
         assert not outcome.passed
-        assert "ACK" in outcome.detail and "NAK" in outcome.detail
+        assert "ACK" in outcome.detail
+        assert "NAK" in outcome.detail
 
     def test_contains(self) -> None:
         assert Contains(value="Paris").evaluate("The capital is Paris.", latency_ms=1).passed
@@ -106,7 +110,13 @@ class TestGoldenDataset:
             [
                 "# a comment",
                 "",
-                json.dumps({"id": "a", "input": "x", "assertions": [{"kind": "contains", "value": "y"}]}),
+                json.dumps(
+                    {
+                        "id": "a",
+                        "input": "x",
+                        "assertions": [{"kind": "contains", "value": "y"}],
+                    }
+                ),
             ],
         )
         dataset = GoldenDataset.load(path)
@@ -156,7 +166,7 @@ class TestGoldenDataset:
 
 
 class TestWilson:
-    def test_perfect_score_does_not_claim_certainty(self):
+    def test_perfect_score_does_not_claim_certainty(self) -> None:
         interval = wilson_interval(20, 20)
         assert interval is not None
         # The Wald interval would return [1.0, 1.0] here — claiming certainty
@@ -172,7 +182,8 @@ class TestWilson:
     def test_more_samples_narrow_the_interval(self) -> None:
         small = wilson_interval(5, 10)
         large = wilson_interval(500, 1000)
-        assert small is not None and large is not None
+        assert small is not None
+        assert large is not None
         assert (large.high - large.low) < (small.high - small.low)
 
     def test_no_data_yields_no_interval(self) -> None:
@@ -268,7 +279,7 @@ class TestNotRunHonesty:
 
 
 class TestRunner:
-    async def test_case_error_counts_as_failure_not_skip(self):
+    async def test_case_error_counts_as_failure_not_skip(self) -> None:
         # Dropping an erroring case would inflate the score of the survivors.
         dataset = GoldenDataset(
             name="d",
@@ -303,7 +314,7 @@ class TestRunner:
         assert report.score == 0.5
         assert report.failures[0].error is not None
 
-    async def test_case_without_assertions_cannot_pass(self):
+    async def test_case_without_assertions_cannot_pass(self) -> None:
         # A case that asserts nothing proves nothing; counting it as a pass
         # would silently inflate every score.
         dataset = GoldenDataset(
@@ -314,7 +325,7 @@ class TestRunner:
             cases=(GoldenCase(id="empty", input="x", assertions=()),),
         )
 
-        async def scaffold(case: GoldenCase) -> ScaffoldResult:
+        async def scaffold(_case: GoldenCase) -> ScaffoldResult:
             return ScaffoldResult(output="anything", latency_ms=1.0)
 
         runner = EvalRunner(

@@ -13,14 +13,19 @@ the answer is not the client's to decide.
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from pydantic import BaseModel, ConfigDict, Field
 
 from policy_guarded_ops_agent.agent.state import RunStatus
 from policy_guarded_ops_agent.approvals.models import ApprovalStatus
-from policy_guarded_ops_agent.audit.models import AuditEvent
 from policy_guarded_ops_agent.policy.models import Effect
+
+if TYPE_CHECKING:
+    # Only ever appears in `from_event`'s signature — a plain classmethod, whose
+    # annotations pydantic never resolves. Unlike the field annotations above,
+    # this one is safe behind TYPE_CHECKING.
+    from policy_guarded_ops_agent.audit.models import AuditEvent
 
 __all__ = [
     "AblationArm",
@@ -183,7 +188,9 @@ class ViolationSummaryItem(_Schema):
     """A rule broken by an executed action."""
 
     rule_id: str = Field(description="The rule that was broken.")
-    severity: str = Field(description="critical (denied action ran) | high (unapproved escalation).")
+    severity: str = Field(
+        description="critical (denied action ran) | high (unapproved escalation)."
+    )
     rationale: str = Field(description="What was broken, with the numbers.")
 
 

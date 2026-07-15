@@ -50,3 +50,23 @@
     transition: none;
   }
 }
+
+/* Landing-page variant: the icon plus the word, so a first-time visitor is not
+   asked to decode a glyph. The console rail stays icon-only. */
+.labelled {
+  width: auto;
+  gap: 6px;
+  padding: 0 10px 0 8px;
+  border-radius: 8px;
+}
+
+.labelText {
+  font-size: var(--t-12);
+  font-weight: 550;
+  color: var(--text-mid);
+  letter-spacing: -0.005em;
+}
+
+.labelled:hover .labelText {
+  color: var(--text-hi);
+}
