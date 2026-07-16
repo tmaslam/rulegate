@@ -168,12 +168,25 @@
 
 /* ── log ───────────────────────────────────────────────────────────────── */
 
-/* Own scroll container. Body never scrolls sideways. */
+/* No overflow at wide widths, deliberately. Any overflow other than `visible`
+   makes this a scroll container, and the sticky header then sticks to THIS box
+   instead of the viewport — so it parked itself --bar-h down and sat on the
+   first row (the exact overlap that was visible here). Below the min-width it
+   does need to scroll, and there the header goes static. Same fix as the
+   approval queue's table. */
 .logWrap {
   border: 1px solid var(--border);
   border-radius: var(--r-3);
   background: var(--bg-surface);
-  overflow-x: auto;
+}
+
+@media (max-width: 980px) {
+  .logWrap {
+    overflow-x: auto;
+  }
+  .logHead {
+    position: static;
+  }
 }
 
 .logHead,
@@ -183,11 +196,12 @@
   gap: var(--s-5);
   align-items: center;
   min-width: 900px;
-  padding: 0 var(--s-5);
+  min-height: 44px;
+  padding: var(--s-3) var(--s-5);
 }
 
 .logHead {
-  height: 28px;
+  min-height: 38px;
   border-bottom: 1px solid var(--border);
   background: var(--bg-raised);
   font-size: 10px;
@@ -219,14 +233,22 @@
   border-left-color: var(--escalate);
 }
 
+.entry[data-effect="allow"] {
+  border-left-color: var(--allow);
+}
+
 .entry[data-kind="human"] {
   border-left-color: var(--accent);
   background: var(--accent-wash);
 }
 
+/* Zebra striping, same as the queue — a wide row is easier to read across. */
+.entry:nth-child(even):not([data-effect="deny"]):not([data-kind="human"]) {
+  background: color-mix(in srgb, var(--bg-canvas) 55%, var(--bg-surface));
+}
+
 .entryRow {
   width: 100%;
-  height: 30px;
   text-align: left;
   transition: background 0.1s var(--ease);
 }
