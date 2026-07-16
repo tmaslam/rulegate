@@ -92,6 +92,7 @@
    a white outlined control, which read as a different family entirely. */
 .labelled {
   height: 31px;
+  font-size: 12px;
   padding: 8px 10px;
   border-radius: 10px;
   border: none;
@@ -100,6 +101,7 @@
 
 .labelled .labelText {
   font-size: 12px;
+  line-height: 1;
   color: var(--accent);
   font-weight: 500;
 }

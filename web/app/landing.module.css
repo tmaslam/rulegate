@@ -89,6 +89,8 @@
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
+  font-size: 12px;
+  line-height: 1;
   padding: 10px 13px;
   border-radius: 10px;
   border: none;
@@ -119,14 +121,14 @@
 /* A single soft blue bloom. Not a gradient soup. */
 .heroGlow {
   position: absolute;
-  top: -30%;
-  left: 50%;
-  translate: -50% 0;
-  width: min(900px, 120vw);
-  aspect-ratio: 1;
-  background: radial-gradient(circle, var(--accent-wash) 0%, transparent 62%);
+  inset: 0;
+  background: radial-gradient(
+    50% 50% at 50% 18%,
+    rgba(59, 130, 246, 0.18) 0%,
+    rgba(59, 130, 246, 0.05) 28%,
+    rgba(8, 12, 21, 0) 58%
+  );
   pointer-events: none;
-  opacity: 0.75;
 }
 
 .eyebrow {
