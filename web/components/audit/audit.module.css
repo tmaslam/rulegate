@@ -496,3 +496,91 @@
     position: static;
   }
 }
+
+/* ── grouped-by-action view ──────────────────────────────────────────────
+   The log reads as one block per transaction: a header carrying the action id
+   and how it ended, then its events as connected steps. Turns a flat wall of
+   rows into a set of stories you can scan. */
+
+.group {
+  border-bottom: 1px solid var(--border);
+}
+.group:last-child {
+  border-bottom: none;
+}
+
+.groupHead {
+  display: flex;
+  align-items: center;
+  gap: var(--s-5);
+  padding: var(--s-4) var(--s-6);
+  background: var(--bg-canvas);
+  position: sticky;
+  top: calc(var(--bar-h) + 38px); /* sits just under the column header */
+  z-index: 4;
+}
+
+.groupAction {
+  font-family: var(--font-mono);
+  font-size: var(--t-13);
+  font-weight: 600;
+  color: var(--text-hi);
+  letter-spacing: -0.01em;
+}
+
+.groupCount {
+  font-size: var(--t-11);
+  color: var(--text-lo);
+}
+
+.groupOutcome {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 650;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 3px 9px;
+  border-radius: 999px;
+  border: 1px solid currentColor;
+}
+.groupOutcome[data-outcome="deny"] {
+  color: var(--deny);
+  background: var(--deny-wash);
+}
+.groupOutcome[data-outcome="escalate"] {
+  color: var(--escalate);
+  background: var(--escalate-wash);
+}
+.groupOutcome[data-outcome="allow"] {
+  color: var(--allow);
+  background: var(--allow-wash);
+}
+
+.groupList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  /* the spine that connects a transaction's steps */
+  border-left: 2px solid var(--border);
+  margin-left: var(--s-6);
+}
+
+/* Steps inside a group are a touch quieter than a standalone row, and the
+   redundant action-id column is hidden — the group header already says it. */
+.group .actionRef {
+  display: none;
+}
+.group .logHead,
+.group .entryRow {
+  grid-template-columns: 128px 104px 190px minmax(280px, 1fr) 26px;
+}
+
+.group .entry {
+  border-left: none;
+}
+/* the deny/allow/escalate wash stays — it is the verdict colour — but the
+   zebra stays subordinate to it, so a denied row still reads as denied. */

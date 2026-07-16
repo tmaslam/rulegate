@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { AUDIT, RULES, type AuditEvent } from "@/lib/fixtures";
+import { AUDIT, RULES, type AuditEvent, type Effect } from "@/lib/fixtures";
 import { stamp } from "@/lib/format";
 import { EffectGlyph } from "../Effect";
 import { IconChevron, IconSearch, IconTool, IconUser } from "../icons";
@@ -55,6 +55,26 @@ export function AuditView() {
       return `${e.actionId} ${e.actor} ${e.summary} ${e.detail ?? ""}`.toLowerCase().includes(needle);
     });
   }, [kind, rule, q]);
+
+  // The log is a stream of events, but it tells a story per action: a request
+  // arrives, tools gather facts, rules vote, a decision lands, it executes. Flat
+  // it is unreadable — every row the same weight, the action id repeated a dozen
+  // times. Group the visible rows into one block per action so each transaction
+  // reads as a unit, headed by its id and its outcome.
+  const groups = useMemo(() => {
+    const out: { actionId: string; outcome: Effect | null; events: AuditEvent[] }[] = [];
+    for (const e of rows) {
+      const last = out[out.length - 1];
+      if (last && last.actionId === e.actionId) last.events.push(e);
+      else out.push({ actionId: e.actionId, outcome: null, events: [e] });
+    }
+    // The outcome is the action's decision verdict (or its execution's effect).
+    for (const g of out) {
+      const decision = g.events.find((e) => e.kind === "decision");
+      g.outcome = decision?.effect ?? g.events.find((e) => e.effect)?.effect ?? null;
+    }
+    return out;
+  }, [rows]);
 
   const counts = useMemo(() => {
     const base: Record<string, number> = { all: AUDIT.length };
@@ -131,10 +151,27 @@ export function AuditView() {
         </div>
 
         <ul className={styles.log}>
-          {rows.map((e) => {
-            const isOpen = open === e.id;
-            return (
-              <li key={e.id} className={styles.entry} data-kind={e.kind} data-effect={e.effect}>
+          {groups.map((g) => (
+            <li key={g.actionId} className={styles.group}>
+              {/* One transaction, headed by its id and how it ended. */}
+              <div className={styles.groupHead} data-outcome={g.outcome ?? undefined}>
+                <span className={styles.groupAction}>{g.actionId}</span>
+                <span className={styles.groupCount}>
+                  {g.events.length} event{g.events.length === 1 ? "" : "s"}
+                </span>
+                {g.outcome && (
+                  <span className={styles.groupOutcome} data-outcome={g.outcome}>
+                    <EffectGlyph effect={g.outcome} />
+                    {g.outcome}
+                  </span>
+                )}
+              </div>
+
+              <ul className={styles.groupList}>
+                {g.events.map((e) => {
+                  const isOpen = open === e.id;
+                  return (
+                    <li key={e.id} className={styles.entry} data-kind={e.kind} data-effect={e.effect}>
                 <button
                   type="button"
                   className={styles.entryRow}
@@ -192,9 +229,12 @@ export function AuditView() {
                     </div>
                   </div>
                 )}
-              </li>
-            );
-          })}
+                    </li>
+                  );
+                })}
+              </ul>
+            </li>
+          ))}
         </ul>
 
         {rows.length === 0 && (
